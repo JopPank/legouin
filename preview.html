@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="fr-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Le Gouin — Aperçu du voyage</title>
+  <style>
+    :root{--paper:#f3f5ef;--white:#fffef9;--ink:#263533;--forest:#315c53;--sage:#deebe1;--muted:#71817a;--line:#dfe7df;--orange:#dba56d;--serif:Georgia,"Times New Roman",serif;--sans:"Segoe UI",Arial,sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:14px var(--sans);-webkit-font-smoothing:antialiased}
+    .wrap{width:min(1120px,92%);margin:auto}.preview{padding:9px 16px;color:#476254;background:#e7eee5;text-align:center;font-size:11px;letter-spacing:.04em}
+    header{height:78px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--forest);font-size:12px;font-weight:700;letter-spacing:.08em}.mark{width:37px;height:37px;display:grid;place-items:center;border-radius:50%;color:white;background:var(--forest);font:600 12px var(--serif)}.brand small{display:block;margin-top:3px;color:#829084;font-size:8px;letter-spacing:.18em}
+    .person{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:600}.avatar{width:31px;height:31px;display:grid;place-items:center;border-radius:50%;background:var(--sage);font:600 14px var(--serif)}
+    .hero{position:relative;display:flex;min-height:330px;align-items:flex-end;justify-content:flex-start;overflow:hidden;margin-top:25px;padding:36px 40px;color:white;background:linear-gradient(90deg,#345d56d9 0%,#426b63a6 43%,#234c4e33 100%),url("./assets/houseboat/bateau-maison-deluxe-25.jpg") center 52%/cover}
+    .hero:after{position:absolute;top:-135px;right:8%;width:350px;height:350px;border:1px solid #ffffff25;border-radius:50%;content:""}.hero:before{position:absolute;top:-108px;right:10.5%;width:295px;height:295px;border:1px solid #ffffff1d;border-radius:50%;content:""}
+    .intro{position:relative;z-index:1}.eyebrow{color:#987b60;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase}.light{color:#e0c6a8}
+    h1{margin:16px 0 10px;font:500 clamp(43px,6vw,64px)/.98 var(--serif);letter-spacing:-.04em}h1 em{color:#e4ba91}
+    .intro p{margin:0;color:#d0dcd4;font-size:12px}
+    .photo-credit{position:absolute;right:12px;bottom:9px;z-index:1;color:#f5f3ecb8;font-size:8px}.photo-credit a{color:inherit}
+    nav{display:flex;gap:25px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:thin}nav button{position:relative;flex:0 0 auto;min-height:62px;border:0;padding:0 3px;color:#7e867e;background:none;font:inherit;font-size:12px;cursor:pointer}nav button.active{color:var(--forest);font-weight:700}nav button.active:after{position:absolute;right:0;bottom:-1px;left:0;height:2px;background:var(--forest);content:""}
+    .number{margin-right:9px;color:#a0a59d;font-size:9px}
+    .grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(255px,.8fr);gap:55px;padding:38px 0 55px}
+    .heading{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}.heading h2{margin:6px 0 0;font:600 35px var(--serif)}.count{color:#858c82;font-size:8px;font-weight:700;letter-spacing:.1em}
+    .day-plan{margin:0 0 23px;border:1px solid var(--line);background:var(--white)}.day-plan-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:12px 15px;background:#edf2eb}.day-plan-head h3{margin:0;color:var(--forest);font:500 19px var(--serif)}.day-plan-head span{color:var(--muted);font-size:9px;letter-spacing:.1em;text-transform:uppercase}.meal-slot{min-height:69px;display:flex;align-items:center;gap:13px;border-bottom:1px solid var(--line);padding:10px 13px}.meal-slot:last-child{border-bottom:0}.meal-slot-type{width:78px;flex:0 0 auto;color:#8a765f;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.meal-slot-info{flex:1;min-width:0}.meal-slot-info strong{display:block;overflow-wrap:anywhere;font:500 15px var(--serif)}.meal-slot-info small{display:block;margin-top:4px;color:#7e8980;font-size:9px}.meal-slot-empty .meal-slot-info strong{color:#89938b;font-style:italic}.meal-edit{flex:0 0 auto;border:1px solid #d3ded4;padding:7px 9px;color:var(--forest);background:#f7f9f4;font-size:9px;cursor:pointer}.meal-edit:hover{border-color:#8ea698;background:#edf3eb}
+    .row{min-height:78px;display:flex;align-items:center;gap:16px;border-top:1px solid var(--line);padding:12px 4px}.row:last-child{border-bottom:1px solid var(--line)}
+    .day{width:40px;display:grid;gap:4px;text-align:center}.day small{color:#8d958c;font-size:8px;letter-spacing:.12em}.day b{color:var(--forest);font:500 24px var(--serif)}
+    .details{flex:1;min-width:0}.details small{color:#998269;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}.details h3{margin:5px 0 0;font:500 16px var(--serif)}
+    .tag{border:1px solid #dbe1d8;padding:6px 8px;color:var(--forest);background:#edf1eb;font-size:9px;white-space:nowrap}
+    aside{align-self:start;border:1px solid var(--line);padding:21px;background:var(--white)}aside h3{margin:8px 0 18px;font:500 21px var(--serif)}
+    label{display:grid;gap:6px;margin:13px 0;color:#455049;font-size:10px;font-weight:600}input,select,textarea{width:100%;min-height:39px;border:1px solid #dfded5;padding:9px 10px;background:white;font:11px var(--sans)}
+    .button{width:100%;min-height:43px;display:flex;align-items:center;justify-content:space-between;margin-top:16px;border:0;padding:0 13px;color:white;background:var(--forest);font-size:10px;font-weight:700;cursor:pointer}
+    .note{color:#858b83;font-size:9px;line-height:1.6}
+    .gear-row,.expense-row{min-height:61px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);padding:10px 3px}.gear-row:last-child,.expense-row:last-child{border-bottom:1px solid var(--line)}
+    .check{width:19px;height:19px;border:1px solid #bdc6ba;border-radius:50%;background:none;color:transparent;cursor:pointer}.check[aria-pressed="true"]{color:white;background:var(--forest)}
+    .gear-label,.expense-label{flex:1;font-size:11px;font-weight:600}.gear-label small,.expense-label small{display:block;margin-top:4px;color:#899087;font-size:9px;font-weight:400}.claimed{border:1px solid #d9ddd4;padding:7px;color:#526453;background:transparent;font-size:9px;cursor:pointer}
+    .balance{margin-bottom:16px;border:1px solid var(--line);padding:17px;background:#eeeee5}.balance small{color:#848b81;font-size:9px;letter-spacing:.1em}.balance strong{display:block;margin:8px 0;color:var(--forest);font:500 29px var(--serif)}.balance p{margin:0;color:#7c837b;font-size:10px}
+    .balance-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 16px;margin-top:15px}.balance-person{display:flex;justify-content:space-between;gap:8px;color:#68776e;font-size:9px}.balance-person strong{color:var(--forest);font-size:9px}
+    .category-totals{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}.category-chip{border:1px solid #d7e0d7;padding:6px 8px;color:#536b5f;background:#f8faf5;font-size:9px}
+    .planner-list{margin-top:16px;border-top:1px solid var(--line)}.planner-row{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(105px,auto) auto;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:12px 3px}.planner-row input[type="checkbox"]{width:18px;min-height:18px;margin:0;accent-color:var(--forest)}.planner-row strong{font-size:11px}.planner-row small{display:block;margin-top:4px;color:#838c82;font-size:9px}.planner-row select{width:auto;min-width:105px;min-height:32px;padding:5px;font-size:9px}.planner-row button{border:1px solid #d9ddd4;padding:7px;color:#526453;background:transparent;font-size:9px;cursor:pointer}.planner-item-done strong{text-decoration:line-through;color:#889188}
+    .settlement-list{margin-top:16px;border-top:1px solid var(--line)}.settlement-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:12px 3px;font-size:10px}.settlement-row strong{color:var(--forest)}.info-card{margin:15px 0;border:1px solid var(--line);padding:15px;background:#f8faf6}.info-card h3{margin:0 0 8px;color:var(--forest);font:500 18px var(--serif)}.info-card p{margin:6px 0;color:#68776e;font-size:10px;line-height:1.6}.status-line{min-height:15px}
+    .gallery-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.gallery-card{overflow:hidden;border:1px solid var(--line);background:var(--white)}.gallery-card img{width:100%;height:190px;display:block;object-fit:cover;background:#e7eee5}.gallery-card p{overflow:hidden;margin:0;padding:10px 11px;color:#68776e;font-size:10px;text-overflow:ellipsis;white-space:nowrap}.listing-gallery{margin:22px 0 32px}.listing-gallery .gallery-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.listing-gallery .gallery-card img{height:125px}.listing-gallery .gallery-card p{font-size:9px}.upload-box{display:grid;justify-items:center;gap:12px;border:1px dashed #b8c9bc;padding:35px 18px;background:#f8faf6;text-align:center}.upload-box strong{color:var(--forest);font:500 19px var(--serif)}.upload-box .note{max-width:320px;margin:0}.file-button{display:inline-flex;align-items:center;justify-content:center;min-height:40px;border:1px solid #b8c9bc;padding:0 14px;color:var(--forest);background:white;font-size:10px;font-weight:700;cursor:pointer}.file-button input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;clip-path:inset(50%)}.file-button:focus-within{outline:2px solid #678171;outline-offset:2px}.gallery-remove{width:100%;border:0;border-top:1px solid var(--line);padding:8px;color:#7b6354;background:transparent;font-size:9px;cursor:pointer}
+    .map-frame{width:100%;height:500px;display:block;border:1px solid var(--line);background:#e7eee5}.map-link{display:inline-block;margin-top:12px;color:var(--forest);font-size:10px;font-weight:700}
+    .hidden{display:none!important}.empty{padding:35px 10px;color:var(--muted);font:italic 16px var(--serif);text-align:center}
+    footer{min-height:68px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);color:#8b9188;font-size:9px}
+    @media(max-width:720px){.wrap{width:90%}.hero{min-height:315px;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:26px 22px}.hero h1{font-size:49px}.grid{grid-template-columns:1fr;gap:25px;padding-top:28px}aside{grid-row:1}nav{gap:18px}nav button{font-size:11px}.heading h2{font-size:31px}.tag{font-size:8px}footer span:nth-child(2){display:none}.meal-slot{gap:8px;padding:9px}.meal-slot-type{width:67px;font-size:8px}.meal-edit{padding:7px;font-size:8px}.gallery-card img{height:145px}.listing-gallery .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.listing-gallery .gallery-card img{height:130px}.planner-row{grid-template-columns:auto minmax(0,1fr) auto;gap:8px}.planner-row select{grid-column:2;grid-row:2;width:100%}.planner-row button{grid-column:3;grid-row:1/3}}
+  </style>
+</head>
+<body>
+  <div class="preview">APERÇU LOCAL · VOYAGE EXEMPLE · Non connecté à un compte ni à une base de données partagée</div>
+  <main class="wrap">
+    <header>
+      <div class="brand"><span class="mark">LG</span><span>LE GOUIN<small>ORGANISATION DU VOYAGE</small></span></div>
+      <div class="person"><span class="avatar">J</span><span>Jop<small style="display:block;margin-top:3px;color:#788078;font-size:9px;font-weight:400">Jop &amp; Nat</small></span></div>
+    </header>
+    <section class="hero">
+      <div class="intro"><span class="eyebrow light">✳ &nbsp;RÉSERVOIR GOUIN · DU 2 AU 6 AOÛT 2027</span><h1>Des lignes à l’eau.<br><em>Des souvenirs à raconter.</em></h1><p>Cinq jours sur le bateau-maison · Huit amis · Quatre couples</p></div>
+      <span class="photo-credit">Bateau-maison Deluxe no 25 · Catherine</span>
+    </section>
+    <nav aria-label="Sections du voyage">
+      <button class="active" data-tab="logistics"><span class="number">01</span>Logistique</button>
+      <button data-tab="packing"><span class="number">02</span>Bagages</button>
+      <button data-tab="groceries"><span class="number">03</span>Épicerie</button>
+      <button data-tab="meals"><span class="number">04</span>Repas</button>
+      <button data-tab="fishing"><span class="number">05</span>Pêche</button>
+      <button data-tab="expenses"><span class="number">06</span>Dépenses</button>
+      <button data-tab="photos"><span class="number">07</span>Photos</button>
+      <button data-tab="map"><span class="number">08</span>Carte</button>
+      <button data-tab="safety"><span class="number">09</span>Sécurité</button>
+    </nav>
+    <section class="grid">
+      <div>
+        <section id="meals" class="hidden">
+          <div class="heading"><div><span class="eyebrow">Autour de la table</span><h2>Plan des repas</h2></div><span class="count" id="meal-count">0 SUR 15 PLANIFIÉS</span></div>
+          <p class="note">Choisissez un repas pour ajouter le menu et le couple qui le préparera. Vous pouvez laisser l’un ou l’autre à déterminer.</p>
+          <div id="meal-schedule"></div>
+        </section>
+        <section id="logistics">
+          <div class="heading"><div><span class="eyebrow">Aller et revenir</span><h2>Logistique du voyage</h2></div></div>
+          <p class="note">Rassemblez ici les horaires et les détails d’organisation. Ajoutez les renseignements dès qu’ils sont confirmés.</p>
+          <div class="info-card" id="logistics-summary"></div>
+        </section>
+        <section id="packing" class="hidden">
+          <div class="heading"><div><span class="eyebrow">Apportons l’essentiel</span><h2>Qui apporte quoi</h2></div><span class="count" id="packing-count">0 PRÊT</span></div>
+          <p class="note">Attribuez chaque article à un couple et cochez-le une fois prêt. Vérifiez ce que la location fournit avant d’acheter ou d’apporter de l’équipement de sécurité nautique.</p>
+          <div class="planner-list" id="packing-list"></div>
+        </section>
+        <section id="groceries" class="hidden">
+          <div class="heading"><div><span class="eyebrow">Planifier les repas, puis magasiner</span><h2>Liste d’épicerie</h2></div><span class="count" id="grocery-count">0 ARTICLE</span></div>
+          <p class="note">Déterminez les quantités à partir du plan des repas, attribuez les achats et cochez les articles achetés.</p>
+          <div class="planner-list" id="grocery-list"></div>
+        </section>
+        <section id="fishing" class="hidden">
+          <div class="heading"><div><span class="eyebrow">Préparer la sortie</span><h2>Notes de pêche</h2></div></div>
+          <p class="note">Notez vos rappels et idées. Vérifiez les règles, permis, saisons, limites et conditions locales en vigueur auprès de sources officielles.</p>
+          <div class="info-card" id="fishing-summary"></div>
+        </section>
+        <section id="safety" class="hidden">
+          <div class="heading"><div><span class="eyebrow">Mieux vaut être préparés</span><h2>Sécurité et contacts</h2></div></div>
+          <p class="note">Gardez à portée de main les consignes d’urgence et les coordonnées du responsable de la location. N’inscrivez pas de renseignements personnels sensibles dans cet aperçu.</p>
+          <div class="info-card" id="safety-summary"></div>
+        </section>
+        <section id="expenses" class="hidden">
+          <div class="heading"><div><span class="eyebrow">Simple et équitable</span><h2>Dépenses partagées</h2></div><span class="count">3 ENTRÉES</span></div>
+          <div class="balance"><small>TOTAL DU VOYAGE</small><strong id="expense-total">248,00 $</strong><p id="expense-share">62,00 $ par couple jusqu’ici</p><div class="balance-grid" id="couple-totals"></div></div>
+          <div class="info-card"><h3>Remboursements suggérés</h3><p>Calculés en partageant également les dépenses inscrites entre les quatre couples.</p><div class="settlement-list" id="settlement-list"></div></div>
+          <div id="expense-list"></div>
+        </section>
+        <section id="photos" class="hidden">
+          <div class="heading"><div><span class="eyebrow">De beaux moments à partager</span><h2>Photos du voyage</h2></div><span class="count" id="photo-count">0 PHOTO</span></div>
+          <section class="listing-gallery" aria-labelledby="listing-photos-title">
+            <div class="heading"><div><span class="eyebrow">Bateau-maison Deluxe no 25 · Catherine</span><h3 id="listing-photos-title">Visite du bateau-maison</h3></div><span class="count">PHOTOS DE L’ANNONCE</span></div>
+            <div class="gallery-grid">
+              <article class="gallery-card"><img src="./assets/houseboat/houseboat-front.jpg" alt="Vue avant du bateau-maison sur l’eau"><p>Bateau-maison sur l’eau</p></article>
+              <article class="gallery-card"><img src="./assets/houseboat/houseboat-side.jpg" alt="Vue latérale du bateau-maison"><p>Vue extérieure</p></article>
+              <article class="gallery-card"><img src="./assets/houseboat/houseboat-deck.jpg" alt="Pont et entrée du bateau-maison"><p>Pont et entrée</p></article>
+              <article class="gallery-card"><img src="./assets/houseboat/houseboat-kitchen.jpg" alt="Cuisine à l’intérieur du bateau-maison"><p>Cuisine du bateau-maison</p></article>
+              <article class="gallery-card"><img src="./assets/houseboat/houseboat-dining.jpg" alt="Coin repas du bateau-maison"><p>Coin repas</p></article>
+            </div>
+            <p class="note">Détails de l’annonce : 20 pi × 55 pi · Capacité de 8 personnes · 4 chambres avec 2 lits simples chacune.</p>
+          </section>
+          <p class="note">Ajoutez vos photos du lac, de vos prises et de vos souvenirs à bord.</p>
+          <div class="upload-box">
+            <strong>Ajouter des photos de votre appareil</strong>
+            <label class="file-button">Choisir des photos<input id="photo-input" type="file" accept="image/*" multiple></label>
+            <p class="note">Cet aperçu affiche les photos sélectionnées sur cet appareil seulement. Elles ne sont ni téléversées ni partagées.</p>
+            <p class="note" id="photo-status" role="status" aria-live="polite"></p>
+          </div>
+          <div class="gallery-grid" id="photo-gallery" style="margin-top:16px"></div>
+        </section>
+        <section id="map" class="hidden">
+          <div class="heading"><div><span class="eyebrow">Repérez votre coin de lac</span><h2>Réservoir Gouin</h2></div><span class="count">QUÉBEC, CANADA</span></div>
+          <div class="map-card">
+            <iframe
+              class="map-frame"
+              title="Carte OpenStreetMap centrée sur le réservoir Gouin, au Québec"
+              src="https://www.openstreetmap.org/export/embed.html?bbox=-75.2%2C48.1%2C-73.8%2C49.0&layer=mapnik&marker=48.55%2C-74.5"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+            ></iframe>
+            <p class="note">Le repère est approximatif et indique seulement la zone du réservoir. Confirmez l’emplacement exact du bateau-maison, l’itinéraire et le point de mise à l’eau auprès du responsable de la location.</p>
+            <a class="map-link" href="https://www.openstreetmap.org/?mlat=48.55&mlon=-74.5#map=9/48.55/-74.5" target="_blank" rel="noreferrer">Ouvrir une carte plus détaillée sur OpenStreetMap ↗</a>
+          </div>
+        </section>
+      </div>
+      <aside>
+        <span class="eyebrow" id="form-eyebrow">Aller et revenir</span>
+        <h3 id="form-title">Logistique du voyage</h3>
+        <div id="meal-form" class="hidden">
+          <label>Journée du voyage<select id="meal-day"><option value="1">Jour 1</option><option value="2">Jour 2</option><option value="3">Jour 3</option><option value="4">Jour 4</option><option value="5">Jour 5</option></select></label>
+          <label>Repas<select id="meal-type"><option>Déjeuner</option><option>Dîner</option><option>Souper</option></select></label>
+          <label>Au menu<textarea id="meal-description" rows="2" placeholder="Ajouter une idée de repas (facultatif)"></textarea></label>
+          <label>Qui le préparera?<select id="meal-couple"><option value="">À déterminer</option></select></label>
+          <button class="button" id="save-meal" type="button">Enregistrer le repas <span>↗</span></button>
+          <button class="claimed" id="clear-meal" type="button" style="width:100%;margin-top:8px">Effacer ce repas</button>
+          <p class="note" id="meal-status" role="status" aria-live="polite"></p>
+          <p class="note">Utilisez le même créneau pour le modifier. Les changements sont enregistrés dans ce navigateur seulement.</p>
+        </div>
+        <div id="logistics-form">
+          <label>Date et heure de départ<input id="logistics-departure" placeholder="2 août · heure à confirmer"></label>
+          <label>Date et heure du retour<input id="logistics-return" placeholder="6 août · heure à confirmer"></label>
+          <label>Lieu de rencontre<input id="logistics-meeting" placeholder="Adresse ou point de repère"></label>
+          <label>Transport et covoiturage<textarea id="logistics-driving" rows="2" placeholder="Conducteurs, places, points de rencontre"></textarea></label>
+          <label>Arrivée et départ de la location<textarea id="logistics-rental" rows="2" placeholder="Consignes d’arrivée, inclus dans la location"></textarea></label>
+          <label>Notes de réservation<input id="logistics-booking" placeholder="Référence ou détails de confirmation"></label>
+          <button class="button" id="save-logistics" type="button">Enregistrer la logistique <span>↗</span></button>
+          <p class="note status-line" id="logistics-status" role="status" aria-live="polite"></p>
+          <p class="note">Enregistré dans cet aperçu sur ce navigateur seulement. N’y inscrivez pas de mots de passe ni de renseignements de paiement.</p>
+        </div>
+        <div id="packing-form" class="hidden">
+          <label>Nom de l’article<input id="packing-name" placeholder="Réchaud de camping"></label>
+          <label>Catégorie<select id="packing-category"><option>Pêche</option><option>Vêtements</option><option>Sécurité</option><option>Bateau et camping</option><option>Personnel</option><option>Autre</option></select></label>
+          <label>Couple responsable<select id="packing-couple"><option value="">Non attribué</option></select></label>
+          <button class="button" id="add-packing" type="button">Ajouter à la liste <span>↗</span></button>
+          <p class="note status-line" id="packing-status" role="status" aria-live="polite"></p>
+          <p class="note">Les changements sont enregistrés dans cet aperçu sur ce navigateur seulement.</p>
+        </div>
+        <div id="groceries-form" class="hidden">
+          <label>Article d’épicerie ou fourniture<input id="grocery-name" placeholder="Café, œufs, eau potable"></label>
+          <label>Quantité ou détails<input id="grocery-quantity" placeholder="Quantité ou note (facultatif)"></label>
+          <label>Qui fera les achats?<select id="grocery-couple"><option value="">Non attribué</option></select></label>
+          <button class="button" id="add-grocery" type="button">Ajouter à la liste d’épicerie <span>↗</span></button>
+          <p class="note status-line" id="grocery-status" role="status" aria-live="polite"></p>
+          <p class="note">Coordonnez cette liste avec le plan des repas. Les changements restent dans ce navigateur.</p>
+        </div>
+        <div id="fishing-form" class="hidden">
+          <label>Espèces recherchées<input id="fishing-species" placeholder="Espèces visées par le groupe"></label>
+          <label>Rappel pour les permis<textarea id="fishing-license" rows="2" placeholder="Qui doit obtenir un permis? Pour quelle date?"></textarea></label>
+          <label>Notes sur les leurres et le matériel<textarea id="fishing-bait" rows="2" placeholder="À apporter ou à acheter"></textarea></label>
+          <label>Idées et notes locales<textarea id="fishing-notes" rows="3" placeholder="Vérifiez les règles et conditions locales en vigueur"></textarea></label>
+          <button class="button" id="save-fishing" type="button">Enregistrer les notes de pêche <span>↗</span></button>
+          <p class="note status-line" id="fishing-status" role="status" aria-live="polite"></p>
+          <p class="note">Avant le départ, vérifiez les règles officielles, les permis, les saisons et les limites de prises en vigueur.</p>
+        </div>
+        <div id="safety-form" class="hidden">
+          <label>Responsable de la location et coordonnées<input id="safety-operator" placeholder="Nom et téléphone/courriel"></label>
+          <label>Service médical ou d’urgence le plus proche<input id="safety-medical" placeholder="À confirmer auprès du responsable"></label>
+          <label>Contacts d’urgence<textarea id="safety-contacts" rows="2" placeholder="Noms et coordonnées, au besoin"></textarea></label>
+          <label>Consignes du bateau et d’urgence<textarea id="safety-instructions" rows="3" placeholder="Consignes du responsable, plan d’urgence"></textarea></label>
+          <button class="button" id="save-safety" type="button">Enregistrer les consignes <span>↗</span></button>
+          <p class="note status-line" id="safety-status" role="status" aria-live="polite"></p>
+          <p class="note">Cet aperçu enregistre les données sur cet appareil seulement; elles ne sont pas partagées. Évitez les renseignements sensibles. Sur un site en ligne, l’accès devra être limité avant d’y conserver des coordonnées privées.</p>
+        </div>
+        <div id="expense-form" class="hidden">
+          <label>À quoi correspond la dépense?<input placeholder="Épicerie, bois de chauffage…"></label>
+          <label>Catégorie<select id="expense-category" required><option value="">Choisir une catégorie</option></select></label>
+          <label>Montant (CAD)<input type="number" placeholder="0,00"></label>
+          <label>Quel couple a payé?<select id="expense-payer"></select></label>
+          <p class="note">Les dépenses sont partagées également entre les quatre couples.</p><button class="button" id="add-expense" type="button">Ajouter la dépense <span>↗</span></button>
+          <p class="note" id="expense-status" role="status" aria-live="polite"></p>
+        </div>
+        <div id="photo-form" class="hidden"><p class="note">Choisissez des photos sur votre appareil pour les voir dans la galerie.</p><label class="file-button">Choisir des photos<input id="photo-input-side" type="file" accept="image/*" multiple></label><p class="note">Les photos ajoutées restent dans cet aperçu local; elles ne sont pas téléversées sur un site partagé.</p></div>
+        <div id="map-form" class="hidden"><span class="eyebrow">Cinq jours sur l’eau</span><h3>Votre zone de voyage</h3><p class="note">Le réservoir Gouin est immense. Ce repère est approximatif; cette carte ne sert pas à la navigation.</p><p class="note">Pour planifier l’itinéraire, utilisez les coordonnées du responsable et les renseignements nautiques officiels à jour.</p></div>
+      </aside>
+    </section>
+    <footer><div class="brand"><span class="mark">LG</span><span>LE GOUIN<small>ORGANISATION DU VOYAGE</small></span></div><span>Pour les kilomètres et les souvenirs à venir.</span><span>APERÇU LOCAL · AUCUNE SYNCHRONISATION</span></footer>
+  </main>
+  <script>
+    const coupleNames = ['Jop & Nat', 'Andréa & Alain', 'Ben & Pas', 'Jo & Chris'];
+    const expenseCategories = [
+      'Essence',
+      'Épicerie',
+      'Boissons',
+      'Matériel de pêche',
+      'Autres frais',
+      'Bois de chauffage'
+    ];
+    const packingCategoryTranslations = {
+      Fishing: 'Pêche', Clothing: 'Vêtements', Safety: 'Sécurité',
+      'Boat & camp': 'Bateau et camping', Personal: 'Personnel', Other: 'Autre'
+    };
+    const mealTypes = ['Déjeuner', 'Dîner', 'Souper'];
+    const mealStorageKey = 'le-gouin-preview-meals';
+    const expenseStorageKey = 'le-gouin-preview-expenses';
+    const previewStorageKeys = {
+      logistics: 'le-gouin-preview-logistics',
+      packing: 'le-gouin-preview-packing',
+      groceries: 'le-gouin-preview-groceries',
+      fishing: 'le-gouin-preview-fishing',
+      safety: 'le-gouin-preview-safety'
+    };
+    const tabNames = ['logistics', 'packing', 'groceries', 'meals', 'fishing', 'expenses', 'photos', 'map', 'safety'];
+    const tabFormIds = { meals: 'meal-form', expenses: 'expense-form', photos: 'photo-form' };
+    const mealLabels = {
+      meals: ['Planifier les repas', 'Ajouter ou modifier un repas'],
+      logistics: ['Aller et revenir', 'Logistique du voyage'],
+      packing: ['Apportons l’essentiel', 'Qui apporte quoi'],
+      groceries: ['Planifier les repas, puis magasiner', 'Liste d’épicerie'],
+      fishing: ['Préparer la sortie', 'Notes de pêche'],
+      safety: ['Mieux vaut être préparés', 'Sécurité et contacts'],
+      expenses: ['Essence, épicerie et bois', 'Ajouter une dépense'],
+      photos: ['Un album à partager', 'Conserver les souvenirs'],
+      map: ['Réservoir Gouin, Québec', 'Carte et région']
+    };
+    const mealSchedule = document.getElementById('meal-schedule');
+    const mealCount = document.getElementById('meal-count');
+    const mealDay = document.getElementById('meal-day');
+    const mealType = document.getElementById('meal-type');
+    const mealDescription = document.getElementById('meal-description');
+    const mealCouple = document.getElementById('meal-couple');
+    const expensePayer = document.getElementById('expense-payer');
+    const expenseCategory = document.getElementById('expense-category');
+    const expenseList = document.getElementById('expense-list');
+    const coupleTotals = document.getElementById('couple-totals');
+    const photoGallery = document.getElementById('photo-gallery');
+    const photoInputs = [document.getElementById('photo-input'), document.getElementById('photo-input-side')];
+    const photos = [];
+    const emptyTripFields = {
+      logistics: { departure: '', return: '', meeting: '', driving: '', rental: '', booking: '' },
+      fishing: { species: '', license: '', bait: '', notes: '' },
+      safety: { operator: '', medical: '', contacts: '', instructions: '' }
+    };
+    const starterPackingItems = [
+      { id: 'rod-reel', name: 'Cannes et moulinets', category: 'Pêche', couple: '', packed: false },
+      { id: 'tackle', name: 'Boîte à pêche et leurres', category: 'Pêche', couple: '', packed: false },
+      { id: 'bait', name: 'Appâts', category: 'Pêche', couple: '', packed: false },
+      { id: 'life-jackets', name: 'Vêtements de flottaison pour les huit (à confirmer avec la location)', category: 'Sécurité', couple: '', packed: false },
+      { id: 'rain-gear', name: 'Vêtements de pluie et sacs étanches', category: 'Vêtements', couple: '', packed: false },
+      { id: 'cooler', name: 'Glacière pour les aliments ou les prises', category: 'Bateau et camping', couple: '', packed: false },
+      { id: 'lights', name: 'Lampes frontales et piles de rechange', category: 'Bateau et camping', couple: '', packed: false },
+      { id: 'sun-insect', name: 'Crème solaire et chasse-moustiques', category: 'Personnel', couple: '', packed: false }
+    ];
+    const tripData = {};
+    tripData.logistics = loadPreviewData(previewStorageKeys.logistics, emptyTripFields.logistics, 'logistics-status');
+    tripData.packing = loadPreviewData(previewStorageKeys.packing, starterPackingItems, 'packing-status');
+    tripData.groceries = loadPreviewData(previewStorageKeys.groceries, [], 'grocery-status');
+    tripData.fishing = loadPreviewData(previewStorageKeys.fishing, emptyTripFields.fishing, 'fishing-status');
+    tripData.safety = loadPreviewData(previewStorageKeys.safety, emptyTripFields.safety, 'safety-status');
+    const initialExpenses = [
+      { id: 1, description: 'Épicerie pour huit', amount: 126, couple: 'Jop & Nat', category: 'Épicerie' },
+      { id: 2, description: 'Leurres et appâts', amount: 42, couple: 'Andréa & Alain', category: 'Matériel de pêche' },
+      { id: 3, description: 'Essence du bateau-maison', amount: 80, couple: 'Ben & Pas', category: 'Essence' }
+    ];
+    const legacyExpenseCategories = {
+      Fuel: 'Essence',
+      'Fuel & transportation': 'Essence',
+      Groceries: 'Épicerie',
+      'Groceries & drinks': 'Épicerie',
+      Drinks: 'Boissons',
+      'Fishing gear': 'Matériel de pêche',
+      'Bait & tackle': 'Matériel de pêche',
+      'Fishing licenses': 'Autres frais',
+      'Ice & cooler supplies': 'Autres frais',
+      'Docking & launch fees': 'Autres frais',
+      'Firewood & camp supplies': 'Bois de chauffage',
+      Firewood: 'Bois de chauffage',
+      'Houseboat rental': 'Autres frais',
+      Other: 'Autres frais'
+    };
+    let expenses = initialExpenses;
+    try {
+      const savedExpenses = localStorage.getItem(expenseStorageKey);
+      if (savedExpenses) {
+        expenses = JSON.parse(savedExpenses).map(expense => ({
+          ...expense,
+          category: expenseCategories.includes(expense.category)
+            ? expense.category
+            : legacyExpenseCategories[expense.category] || initialExpenses.find(sample => sample.id === expense.id)?.category || 'Autres frais',
+          description: ({ 'Groceries for eight': 'Épicerie pour huit', 'Fishing tackle & bait': 'Leurres et appâts', 'Houseboat fuel': 'Essence du bateau-maison', food: 'Nourriture' })[expense.description] || expense.description
+        }));
+      }
+    } catch {
+      expenses = initialExpenses;
+    }
+    coupleNames.forEach(name => {
+      const option = document.createElement('option');
+      option.textContent = name;
+      mealCouple.append(option);
+      const payerOption = document.createElement('option');
+      payerOption.textContent = name;
+      expensePayer.append(payerOption);
+      ['packing-couple', 'grocery-couple'].forEach(id => {
+        const select = document.getElementById(id);
+        const option = document.createElement('option');
+        option.value = name;
+        option.textContent = name;
+        select.append(option);
+      });
+    });
+    expenseCategories.forEach(category => {
+      const option = document.createElement('option');
+      option.textContent = category;
+      expenseCategory.append(option);
+    });
+    let meals = {};
+    try {
+      meals = JSON.parse(localStorage.getItem(mealStorageKey) || '{}');
+      const legacyMealNames = { Breakfast: 'Déjeuner', Lunch: 'Dîner', Dinner: 'Souper' };
+      Object.entries(legacyMealNames).forEach(([oldName, newName]) => {
+        Object.keys(meals).filter(key => key.endsWith(`-${oldName}`)).forEach(key => {
+          meals[key.replace(`-${oldName}`, `-${newName}`)] = meals[key];
+          delete meals[key];
+        });
+      });
+    } catch {
+      meals = {};
+    }
+
+    function loadPreviewData(key, fallback, statusId) {
+      try {
+        const stored = localStorage.getItem(key);
+        if (stored === null) return structuredClone(fallback);
+        const parsed = JSON.parse(stored);
+        const valid = Array.isArray(fallback)
+          ? Array.isArray(parsed)
+          : parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed);
+        if (!valid) throw new TypeError('Stored preview data has an unexpected format.');
+        if (key === previewStorageKeys.packing) {
+          return parsed.map(item => ({
+            ...item,
+            name: ({
+              'Fishing rods & reels': 'Cannes et moulinets',
+              'Tackle box & lures': 'Boîte à pêche et leurres',
+              Bait: 'Appâts',
+              'Life jackets for all eight (confirm rental supply)': 'Vêtements de flottaison pour les huit (à confirmer avec la location)',
+              'Rain layers & dry bags': 'Vêtements de pluie et sacs étanches',
+              'Cooler for food or the catch': 'Glacière pour les aliments ou les prises',
+              'Headlamps & spare batteries': 'Lampes frontales et piles de rechange',
+              'Sunscreen & insect repellent': 'Crème solaire et chasse-moustiques'
+            })[item.name] || item.name,
+            category: packingCategoryTranslations[item.category] || item.category
+          }));
+        }
+        return parsed;
+      } catch {
+        document.getElementById(statusId).textContent = 'Impossible de lire les données enregistrées. Les valeurs par défaut sont affichées; vérifiez le stockage du navigateur avant d’enregistrer.';
+        return structuredClone(fallback);
+      }
+    }
+
+    function saveTripData(section, statusId, successMessage) {
+      try {
+        localStorage.setItem(previewStorageKeys[section], JSON.stringify(tripData[section]));
+      } catch {
+        document.getElementById(statusId).textContent = 'Impossible d’enregistrer dans ce navigateur. Vérifiez les paramètres de stockage et réessayez.';
+        return false;
+      }
+      document.getElementById(statusId).textContent = successMessage;
+      return true;
+    }
+
+    function renderInfo(summaryId, fields, labels) {
+      const summary = document.getElementById(summaryId);
+      summary.replaceChildren();
+      let filled = false;
+      Object.entries(labels).forEach(([key, label]) => {
+        const value = fields[key]?.trim();
+        if (!value) return;
+        filled = true;
+        const line = document.createElement('p');
+        const strong = document.createElement('strong');
+        strong.textContent = `${label}: `;
+        line.append(strong, document.createTextNode(value));
+        summary.append(line);
+      });
+      if (!filled) {
+        const placeholder = document.createElement('p');
+        placeholder.textContent = 'Détails à confirmer — utilisez le formulaire pour les ajouter.';
+        summary.append(placeholder);
+      }
+    }
+
+    function populateFields(fields, prefix, keys) {
+      keys.forEach(key => {
+        document.getElementById(`${prefix}-${key}`).value = fields[key] || '';
+      });
+    }
+
+    function currentFields(prefix, keys) {
+      return Object.fromEntries(keys.map(key => [key, document.getElementById(`${prefix}-${key}`).value.trim()]));
+    }
+
+    function renderPacking() {
+      const list = document.getElementById('packing-list');
+      list.replaceChildren();
+      tripData.packing.forEach(item => {
+        const row = document.createElement('div');
+        row.className = `planner-row${item.packed ? ' planner-item-done' : ''}`;
+        const packed = document.createElement('input');
+        packed.type = 'checkbox';
+        packed.checked = Boolean(item.packed);
+        packed.setAttribute('aria-label', `Marquer ${item.name} comme prêt`);
+        packed.dataset.action = 'packed';
+        packed.dataset.id = item.id;
+        const details = document.createElement('span');
+        const name = document.createElement('strong');
+        name.textContent = item.name;
+        const meta = document.createElement('small');
+        meta.textContent = item.category;
+        details.append(name, meta);
+        const couple = document.createElement('select');
+        couple.dataset.action = 'couple';
+        couple.dataset.id = item.id;
+        couple.setAttribute('aria-label', `Couple responsable de ${item.name}`);
+        couple.add(new Option('Non attribué', ''));
+        coupleNames.forEach(name => couple.add(new Option(name, name)));
+        couple.value = item.couple || '';
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = 'Retirer';
+        remove.dataset.action = 'remove';
+        remove.dataset.id = item.id;
+        row.append(packed, details, couple, remove);
+        list.append(row);
+      });
+      const packedCount = tripData.packing.filter(item => item.packed).length;
+      document.getElementById('packing-count').textContent = `${packedCount} SUR ${tripData.packing.length} PRÊT${tripData.packing.length > 1 ? 'S' : ''}`;
+    }
+
+    function renderGroceries() {
+      const list = document.getElementById('grocery-list');
+      list.replaceChildren();
+      if (!tripData.groceries.length) {
+        const empty = document.createElement('p');
+        empty.className = 'empty';
+        empty.textContent = 'Votre liste d’épicerie attend vos idées de repas.';
+        list.append(empty);
+      }
+      tripData.groceries.forEach(item => {
+        const row = document.createElement('div');
+        row.className = `planner-row${item.bought ? ' planner-item-done' : ''}`;
+        const bought = document.createElement('input');
+        bought.type = 'checkbox';
+        bought.checked = Boolean(item.bought);
+        bought.setAttribute('aria-label', `Marquer ${item.name} comme acheté`);
+        bought.dataset.action = 'bought';
+        bought.dataset.id = item.id;
+        const details = document.createElement('span');
+        const name = document.createElement('strong');
+        name.textContent = item.name;
+        const meta = document.createElement('small');
+        meta.textContent = [item.quantity, item.couple ? `Achats : ${item.couple}` : 'Personne responsable non attribuée'].filter(Boolean).join(' · ');
+        details.append(name, meta);
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.textContent = 'Retirer';
+        remove.dataset.action = 'remove';
+        remove.dataset.id = item.id;
+        row.append(bought, details, remove);
+        list.append(row);
+      });
+      const boughtCount = tripData.groceries.filter(item => item.bought).length;
+      document.getElementById('grocery-count').textContent = `${boughtCount} SUR ${tripData.groceries.length} ACHETÉ${tripData.groceries.length > 1 ? 'S' : ''}`;
+    }
+
+    function renderMeals() {
+      mealSchedule.replaceChildren();
+      let planned = 0;
+      for (let day = 1; day <= 5; day += 1) {
+        const dayCard = document.createElement('section');
+        dayCard.className = 'day-plan';
+        const dayHead = document.createElement('div');
+        dayHead.className = 'day-plan-head';
+        const dayTitle = document.createElement('h3');
+        dayTitle.textContent = `Jour ${day} · ${new Intl.DateTimeFormat('fr-CA', { weekday: 'short', month: 'short', day: 'numeric' }).format(new Date(2027, 7, day + 1))}`;
+        const dayNote = document.createElement('span');
+        dayNote.textContent = `JOUR ${String(day).padStart(2, '0')} · VOYAGE DE 5 JOURS`;
+        dayHead.append(dayTitle, dayNote);
+        dayCard.append(dayHead);
+
+        mealTypes.forEach(type => {
+          const key = `${day}-${type}`;
+          const meal = meals[key] || {};
+          const hasMeal = Boolean(meal.description || meal.couple);
+          if (hasMeal) planned += 1;
+
+          const slot = document.createElement('div');
+          slot.className = `meal-slot${hasMeal ? '' : ' meal-slot-empty'}`;
+          const typeLabel = document.createElement('span');
+          typeLabel.className = 'meal-slot-type';
+          typeLabel.textContent = type;
+          const info = document.createElement('span');
+          info.className = 'meal-slot-info';
+          const description = document.createElement('strong');
+          description.textContent = meal.description || (meal.couple ? 'Menu à déterminer' : 'Libre — ajouter un repas');
+          const cook = document.createElement('small');
+          cook.textContent = meal.couple ? `Préparé par : ${meal.couple}` : 'Personne responsable à déterminer';
+          info.append(description, cook);
+          const edit = document.createElement('button');
+          edit.className = 'meal-edit';
+          edit.type = 'button';
+          edit.dataset.day = String(day);
+          edit.dataset.type = type;
+          edit.textContent = hasMeal ? 'Modifier' : 'Ajouter';
+          edit.setAttribute('aria-label', `${hasMeal ? 'Modifier' : 'Ajouter'} le repas « ${type.toLowerCase()} » du jour ${day}`);
+          slot.append(typeLabel, info, edit);
+          dayCard.append(slot);
+        });
+        mealSchedule.append(dayCard);
+      }
+      mealCount.textContent = `${planned} SUR 15 PLANIFIÉS`;
+    }
+
+    function money(amount) {
+      return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD' }).format(amount);
+    }
+
+    function renderExpenses() {
+      expenseList.replaceChildren();
+      const total = expenses.reduce((sum, expense) => sum + Number(expense.amount), 0);
+      document.getElementById('expense-total').textContent = money(total);
+      document.getElementById('expense-share').textContent = `${money(total / 4)} par couple jusqu’ici`;
+      document.querySelector('#expenses .count').textContent = `${expenses.length} ENTRÉE${expenses.length === 1 ? '' : 'S'}`;
+      coupleTotals.replaceChildren();
+      const categoryTotals = new Map();
+      expenses.forEach(expense => {
+        const category = expense.category || 'Autres frais';
+        categoryTotals.set(category, (categoryTotals.get(category) || 0) + Number(expense.amount));
+      });
+      let categorySummary = document.getElementById('category-totals');
+      if (!categorySummary) {
+        categorySummary = document.createElement('div');
+        categorySummary.id = 'category-totals';
+        categorySummary.className = 'category-totals';
+        document.getElementById('couple-totals').after(categorySummary);
+      }
+      categorySummary.replaceChildren();
+      [...categoryTotals.entries()].sort((left, right) => right[1] - left[1]).forEach(([category, amount]) => {
+        const chip = document.createElement('span');
+        chip.className = 'category-chip';
+        chip.textContent = `${category} · ${money(amount)}`;
+        categorySummary.append(chip);
+      });
+
+      coupleNames.forEach(couple => {
+        const paid = expenses.filter(expense => expense.couple === couple).reduce((sum, expense) => sum + Number(expense.amount), 0);
+        const line = document.createElement('div');
+        line.className = 'balance-person';
+        const name = document.createElement('span');
+        name.textContent = couple;
+        const amount = document.createElement('strong');
+        amount.textContent = `${money(paid)} payé`;
+        line.append(name, amount);
+        coupleTotals.append(line);
+      });
+
+      const debtors = [];
+      const creditors = [];
+      coupleNames.forEach(couple => {
+        const paid = expenses.filter(expense => expense.couple === couple).reduce((sum, expense) => sum + Number(expense.amount), 0);
+        const balance = Math.round((paid - total / coupleNames.length) * 100) / 100;
+        if (balance < -0.01) debtors.push({ couple, amount: -balance });
+        if (balance > 0.01) creditors.push({ couple, amount: balance });
+      });
+      const settlementList = document.getElementById('settlement-list');
+      settlementList.replaceChildren();
+      if (!debtors.length && !creditors.length) {
+        const even = document.createElement('p');
+        even.className = 'note';
+        even.textContent = 'Les comptes sont équilibrés pour le moment.';
+        settlementList.append(even);
+      }
+      while (debtors.length && creditors.length) {
+        const debtor = debtors[0];
+        const creditor = creditors[0];
+        const amount = Math.min(debtor.amount, creditor.amount);
+        const line = document.createElement('div');
+        line.className = 'settlement-row';
+        const transfer = document.createElement('span');
+        transfer.textContent = `${debtor.couple} rembourse ${creditor.couple}`;
+        const value = document.createElement('strong');
+        value.textContent = money(amount);
+        line.append(transfer, value);
+        settlementList.append(line);
+        debtor.amount = Math.round((debtor.amount - amount) * 100) / 100;
+        creditor.amount = Math.round((creditor.amount - amount) * 100) / 100;
+        if (debtor.amount < 0.01) debtors.shift();
+        if (creditor.amount < 0.01) creditors.shift();
+      }
+
+      expenses.forEach(expense => {
+        const row = document.createElement('div');
+        row.className = 'expense-row';
+        const details = document.createElement('span');
+        details.className = 'expense-label';
+        details.append(document.createTextNode(expense.description));
+        const payer = document.createElement('small');
+        payer.textContent = `${expense.category || 'Autres frais'} · ${expense.couple} · Aperçu`;
+        details.append(payer);
+        const amount = document.createElement('b');
+        amount.textContent = money(Number(expense.amount));
+        const remove = document.createElement('button');
+        remove.className = 'claimed';
+        remove.type = 'button';
+        remove.textContent = 'Retirer';
+        remove.setAttribute('aria-label', `Retirer la dépense : ${expense.description}`);
+        remove.addEventListener('click', () => {
+          expenses = expenses.filter(item => item.id !== expense.id);
+          saveExpenses();
+        });
+        row.append(details, amount, remove);
+        expenseList.append(row);
+      });
+    }
+
+    function saveExpenses() {
+      try {
+        localStorage.setItem(expenseStorageKey, JSON.stringify(expenses));
+      } catch {
+        document.getElementById('expense-status').textContent = 'Impossible d’enregistrer dans ce navigateur. Vérifiez les paramètres de stockage et réessayez.';
+        return false;
+      }
+      renderExpenses();
+      return true;
+    }
+
+    function renderPhotos() {
+      photoGallery.replaceChildren();
+      photos.forEach(photo => {
+        const card = document.createElement('article');
+        card.className = 'gallery-card';
+        const image = document.createElement('img');
+        image.src = photo.url;
+        image.alt = photo.name;
+        const caption = document.createElement('p');
+        caption.textContent = photo.name;
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'gallery-remove';
+        remove.textContent = 'Retirer de l’aperçu';
+        remove.addEventListener('click', () => {
+          URL.revokeObjectURL(photo.url);
+          photos.splice(photos.indexOf(photo), 1);
+          renderPhotos();
+        });
+        card.append(image, caption, remove);
+        photoGallery.append(card);
+      });
+      document.getElementById('photo-count').textContent = `${photos.length} ${photos.length === 1 ? 'PHOTO' : 'PHOTOS'}`;
+    }
+
+    function openMealEditor(day, type) {
+      document.querySelector('nav button[data-tab="meals"]').click();
+      mealDay.value = String(day);
+      mealType.value = type;
+      const meal = meals[`${day}-${type}`] || {};
+      mealDescription.value = meal.description || '';
+      mealCouple.value = meal.couple || '';
+      document.getElementById('form-title').textContent = `Jour ${day} · ${type.toLowerCase()}`;
+      document.getElementById('meal-description').focus();
+    }
+
+    document.querySelectorAll('nav button').forEach(button => button.addEventListener('click', () => {
+      const tab = button.dataset.tab;
+      document.querySelectorAll('nav button').forEach(item => item.classList.toggle('active', item === button));
+      tabNames.forEach(name => {
+        document.getElementById(name).classList.toggle('hidden', name !== tab);
+        document.getElementById(tabFormIds[name] || `${name}-form`).classList.toggle('hidden', name !== tab);
+      });
+      document.getElementById('form-eyebrow').textContent = mealLabels[tab][0];
+      document.getElementById('form-title').textContent = mealLabels[tab][1];
+    }));
+
+    populateFields(tripData.logistics, 'logistics', ['departure', 'return', 'meeting', 'driving', 'rental', 'booking']);
+    populateFields(tripData.fishing, 'fishing', ['species', 'license', 'bait', 'notes']);
+    populateFields(tripData.safety, 'safety', ['operator', 'medical', 'contacts', 'instructions']);
+    renderInfo('logistics-summary', tripData.logistics, {
+      departure: 'Départ', return: 'Retour', meeting: 'Lieu de rencontre', driving: 'Transport et covoiturage',
+      rental: 'Détails de la location', booking: 'Notes de réservation'
+    });
+    renderInfo('fishing-summary', tripData.fishing, {
+      species: 'Espèces visées', license: 'Rappel pour les permis', bait: 'Leurres et matériel', notes: 'Notes de pêche'
+    });
+    renderInfo('safety-summary', tripData.safety, {
+      operator: 'Responsable de la location', medical: 'Service médical le plus proche', contacts: 'Contacts d’urgence',
+      instructions: 'Consignes de sécurité'
+    });
+    renderPacking();
+    renderGroceries();
+
+    document.getElementById('save-logistics').addEventListener('click', () => {
+      tripData.logistics = currentFields('logistics', ['departure', 'return', 'meeting', 'driving', 'rental', 'booking']);
+      if (saveTripData('logistics', 'logistics-status', 'La logistique est enregistrée dans cet aperçu sur ce navigateur.')) {
+        renderInfo('logistics-summary', tripData.logistics, {
+          departure: 'Départ', return: 'Retour', meeting: 'Lieu de rencontre', driving: 'Transport et covoiturage',
+          rental: 'Détails de la location', booking: 'Notes de réservation'
+        });
+      }
+    });
+
+    document.getElementById('packing-list').addEventListener('change', event => {
+      const control = event.target.closest('[data-action]');
+      if (!control) return;
+      const item = tripData.packing.find(entry => String(entry.id) === control.dataset.id);
+      if (!item) return;
+      if (control.dataset.action === 'packed') item.packed = control.checked;
+      if (control.dataset.action === 'couple') item.couple = control.value;
+      saveTripData('packing', 'packing-status', 'La liste des bagages est enregistrée dans cet aperçu.');
+      renderPacking();
+    });
+    document.getElementById('packing-list').addEventListener('click', event => {
+      const button = event.target.closest('[data-action="remove"]');
+      if (!button) return;
+      tripData.packing = tripData.packing.filter(item => String(item.id) !== button.dataset.id);
+      saveTripData('packing', 'packing-status', 'Article retiré de la liste.');
+      renderPacking();
+    });
+    document.getElementById('add-packing').addEventListener('click', () => {
+      const nameInput = document.getElementById('packing-name');
+      const name = nameInput.value.trim();
+      if (!name) {
+        document.getElementById('packing-status').textContent = 'Saisissez d’abord le nom d’un article.';
+        return;
+      }
+      tripData.packing.push({
+        id: Date.now(),
+        name,
+        category: document.getElementById('packing-category').value,
+        couple: document.getElementById('packing-couple').value,
+        packed: false
+      });
+      if (saveTripData('packing', 'packing-status', 'Article ajouté à la liste.')) {
+        nameInput.value = '';
+        renderPacking();
+      }
+    });
+
+    document.getElementById('grocery-list').addEventListener('change', event => {
+      const control = event.target.closest('[data-action="bought"]');
+      if (!control) return;
+      const item = tripData.groceries.find(entry => String(entry.id) === control.dataset.id);
+      if (!item) return;
+      item.bought = control.checked;
+      saveTripData('groceries', 'grocery-status', 'La liste d’épicerie est enregistrée dans cet aperçu.');
+      renderGroceries();
+    });
+    document.getElementById('grocery-list').addEventListener('click', event => {
+      const button = event.target.closest('[data-action="remove"]');
+      if (!button) return;
+      tripData.groceries = tripData.groceries.filter(item => String(item.id) !== button.dataset.id);
+      saveTripData('groceries', 'grocery-status', 'Article retiré de la liste d’épicerie.');
+      renderGroceries();
+    });
+    document.getElementById('add-grocery').addEventListener('click', () => {
+      const nameInput = document.getElementById('grocery-name');
+      const name = nameInput.value.trim();
+      if (!name) {
+        document.getElementById('grocery-status').textContent = 'Saisissez d’abord un article d’épicerie ou une fourniture.';
+        return;
+      }
+      tripData.groceries.push({
+        id: Date.now(),
+        name,
+        quantity: document.getElementById('grocery-quantity').value.trim(),
+        couple: document.getElementById('grocery-couple').value,
+        bought: false
+      });
+      if (saveTripData('groceries', 'grocery-status', 'Article ajouté à la liste d’épicerie.')) {
+        nameInput.value = '';
+        document.getElementById('grocery-quantity').value = '';
+        renderGroceries();
+      }
+    });
+
+    document.getElementById('save-fishing').addEventListener('click', () => {
+      tripData.fishing = currentFields('fishing', ['species', 'license', 'bait', 'notes']);
+      if (saveTripData('fishing', 'fishing-status', 'Les notes de pêche sont enregistrées dans cet aperçu.')) {
+        renderInfo('fishing-summary', tripData.fishing, {
+          species: 'Espèces visées', license: 'Rappel pour les permis', bait: 'Leurres et matériel', notes: 'Notes de pêche'
+        });
+      }
+    });
+    document.getElementById('save-safety').addEventListener('click', () => {
+      tripData.safety = currentFields('safety', ['operator', 'medical', 'contacts', 'instructions']);
+      if (saveTripData('safety', 'safety-status', 'Les consignes de sécurité sont enregistrées dans cet aperçu.')) {
+        renderInfo('safety-summary', tripData.safety, {
+          operator: 'Responsable de la location', medical: 'Service médical le plus proche', contacts: 'Contacts d’urgence',
+          instructions: 'Consignes de sécurité'
+        });
+      }
+    });
+
+    mealSchedule.addEventListener('click', event => {
+      const button = event.target.closest('.meal-edit');
+      if (button) openMealEditor(button.dataset.day, button.dataset.type);
+    });
+
+    document.getElementById('save-meal').addEventListener('click', () => {
+      const day = mealDay.value;
+      const type = mealType.value;
+      const key = `${day}-${type}`;
+      const description = mealDescription.value.trim();
+      const couple = mealCouple.value;
+      if (!description && !couple) {
+        document.getElementById('meal-status').textContent = 'Ajoutez une idée de repas ou choisissez d’abord le couple responsable.';
+        return;
+      }
+      meals[key] = { description, couple };
+      try {
+        localStorage.setItem(mealStorageKey, JSON.stringify(meals));
+      } catch {
+        document.getElementById('meal-status').textContent = 'Impossible d’enregistrer dans ce navigateur. Vérifiez les paramètres de stockage et réessayez.';
+        return;
+      }
+      renderMeals();
+      document.getElementById('meal-status').textContent = `Repas du jour ${day} (${type.toLowerCase()}) enregistré dans cet aperçu.`;
+    });
+
+    document.getElementById('clear-meal').addEventListener('click', () => {
+      const key = `${mealDay.value}-${mealType.value}`;
+      delete meals[key];
+      try {
+        localStorage.setItem(mealStorageKey, JSON.stringify(meals));
+      } catch {
+        document.getElementById('meal-status').textContent = 'Impossible d’enregistrer la modification dans ce navigateur. Vérifiez les paramètres de stockage et réessayez.';
+        return;
+      }
+      renderMeals();
+      document.getElementById('meal-description').value = '';
+      document.getElementById('meal-couple').value = '';
+      document.getElementById('meal-status').textContent = 'Repas effacé.';
+    });
+
+    document.getElementById('add-expense').addEventListener('click', () => {
+      const descriptionInput = document.querySelector('#expense-form input:not([type="file"])');
+      const amountInput = document.querySelector('#expense-form input[type="number"]');
+      const description = descriptionInput.value.trim();
+      const amount = Number(amountInput.value);
+      if (!description || !Number.isFinite(amount) || amount <= 0 || !expenseCategory.value) {
+        document.getElementById('expense-status').textContent = 'Saisissez une description, choisissez une catégorie et indiquez un montant supérieur à zéro.';
+        return;
+      }
+      expenses.push({
+        id: Date.now(),
+        description,
+        amount: Math.round(amount * 100) / 100,
+        couple: expensePayer.value,
+        category: expenseCategory.value
+      });
+      if (saveExpenses()) {
+        descriptionInput.value = '';
+        amountInput.value = '';
+        document.getElementById('expense-status').textContent = `Dépense ajoutée pour ${expensePayer.value}.`;
+      }
+    });
+
+    photoInputs.forEach(input => input.addEventListener('change', () => {
+      const files = Array.from(input.files || []);
+      const invalidFile = files.find(file => !file.type.startsWith('image/'));
+      if (invalidFile) {
+        document.getElementById('photo-status').textContent = 'Choisissez uniquement des fichiers image.';
+        input.value = '';
+        return;
+      }
+      files.forEach(file => photos.push({ name: file.name, url: URL.createObjectURL(file) }));
+      renderPhotos();
+      document.getElementById('photo-status').textContent = files.length ? `${files.length} photo${files.length === 1 ? '' : 's'} ajoutée${files.length === 1 ? '' : 's'} à cet aperçu.` : '';
+      photoInputs.forEach(photoInput => { photoInput.value = ''; });
+    }));
+
+    document.querySelectorAll('.check').forEach(button => button.addEventListener('click', () => {
+      button.setAttribute('aria-pressed', button.getAttribute('aria-pressed') !== 'true');
+    }));
+    renderMeals();
+    renderExpenses();
+    renderPhotos();
+  </script>
+</body>
+</html>
