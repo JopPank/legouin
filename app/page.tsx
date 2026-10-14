@@ -26,10 +26,11 @@ type BaseData = {
 };
 type MutationInput = Omit<PendingOp, 'id' | 'queuedAt' | 'tempId'>;
 
-const gearCategories = ['Kitchen', 'Shelter', 'Food & water', 'Safety', 'Personal', 'Other'];
+const gearCategories = ['Documents', 'Fishing', 'Kitchen', 'Food & water', 'Safety', 'Personal', 'Electronics', 'Camp', 'Shelter', 'Other'];
 const gearCategoryLabels: Record<string, string> = {
   Kitchen: 'Cuisine', Shelter: 'Abri', 'Food & water': 'Nourriture et eau',
   Safety: 'Sécurité', Personal: 'Personnel', Other: 'Autre',
+  Documents: 'Documents et argent', Fishing: 'Pêche', Electronics: 'Électronique', Camp: 'Camp et matériel',
 };
 const mealTypeLabels: Record<MealType, string> = {
   Breakfast: 'Déjeuner', Lunch: 'Dîner', Dinner: 'Souper', Snacks: 'Collations',
@@ -333,7 +334,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const [mealCouple, setMealCouple] = useState('');
   const [mealDetails, setMealDetails] = useState('');
   const [gearName, setGearName] = useState('');
-  const [gearCategory, setGearCategory] = useState(gearCategories[0]);
+  const [gearCategory, setGearCategory] = useState('Other');
   const [expenseDescription, setExpenseDescription] = useState('');
   const [expenseAmount, setExpenseAmount] = useState('');
   const [expenseCategory, setExpenseCategory] = useState(expenseCategories[0]);
