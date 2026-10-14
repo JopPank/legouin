@@ -1236,7 +1236,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
         <aside className="sidebar">
           {tab === 'map' && (
-            <div className="side-card">
+            <div className="side-card directions-card">
               <span className="eyebrow">Départ de Gatineau · 420 km</span><h3>Comment s’y rendre</h3>
               <p className="side-note">Route 309 Nord jusqu’à Mont-Laurier, tout droit sur la 309 Nord jusqu’à Mont-Saint-Michel, puis direction Parent. À Parent, à l’intersection (dépanneur), tout droit direction barrage Gouin jusqu’au km 53. Tourner à gauche au panneau de la pourvoirie (3,5 km).</p>
               <p className="side-note"><strong>Avertissement :</strong> ne pas utiliser un GPS sur les routes gravelées au risque de vous perdre. Suivez les indications fournies par la pourvoirie.</p>
