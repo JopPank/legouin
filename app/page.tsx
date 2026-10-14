@@ -31,6 +31,7 @@ const everyoneId = 5;
 const assigneeIds = [1, 2, 3, 4, everyoneId];
 const fishSpecies = ['Doré jaune', 'Grand brochet', 'Grand corégone', 'Touladi', 'Omble de fontaine', 'Perchaude', 'Lotte'];
 const otherSpecies = 'Autre espèce';
+const participantNames = ['Jop', 'Nat', 'Andréa', 'Alain', 'Ben', 'Pas', 'Jo', 'Chris'];
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Une erreur inattendue est survenue.';
@@ -307,7 +308,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const [catchWeight, setCatchWeight] = useState('');
   const [catchUnknownWeight, setCatchUnknownWeight] = useState(false);
   const [catchLocation, setCatchLocation] = useState('');
-  const [catchCouple, setCatchCouple] = useState('');
+  const [catchPerson, setCatchPerson] = useState('');
   const [catchReleased, setCatchReleased] = useState(false);
   const [safetyInfo, setSafetyInfo] = useState<SafetyInfo | null>(null);
   const [photos, setPhotos] = useState<TripPhoto[]>([]);
@@ -599,7 +600,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
         species: catchSpecies,
         weight_kg: weight,
         location: catchLocation.trim(),
-        caught_by_couple_id: catchCouple ? Number(catchCouple) : null,
+        caught_by: catchPerson,
         released: catchReleased,
       }),
       'Prise ajoutée au journal',
@@ -922,7 +923,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                   {catches.map((item) => (
                     <article className="gear-row" key={item.id}>
                       <span className="catch-weight">{item.weight_kg === null ? '?' : `${Number(item.weight_kg).toFixed(1)}`}<small>{item.weight_kg === null ? 'poids inconnu' : 'kg'}</small></span>
-                      <span className="gear-name">{item.species}{item.released ? ' · remis à l’eau' : ''}<small>{[item.location, item.caught_by_couple_id ? coupleNames.get(item.caught_by_couple_id) : '', new Date(item.created_at).toLocaleString('fr-CA', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })].filter(Boolean).join(' · ')}</small></span>
+                      <span className="gear-name">{item.species}{item.released ? ' · remis à l’eau' : ''}<small>{[item.location, item.caught_by || (item.caught_by_couple_id ? coupleNames.get(item.caught_by_couple_id) : ''), new Date(item.created_at).toLocaleString('fr-CA', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })].filter(Boolean).join(' · ')}</small></span>
                       <button className="claim-button" onClick={() => void deleteCatch(item)} disabled={saving} aria-label={`Retirer la prise ${item.species}`}>Retirer</button>
                     </article>
                   ))}
@@ -1136,7 +1137,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <label className="species-option"><input type="checkbox" checked={catchUnknownWeight} onChange={(event) => setCatchUnknownWeight(event.target.checked)} />Poids inconnu (petit poisson)</label>
               <label>Endroit<input value={catchLocation} onChange={(event) => setCatchLocation(event.target.value)} placeholder="Baie, île, point, profondeur…" list="catch-locations" /></label>
               <datalist id="catch-locations">{[...new Set(catches.map((item) => item.location).filter(Boolean))].map((name) => <option key={name} value={name} />)}</datalist>
-              <label>Pêché par<select value={catchCouple} onChange={(event) => setCatchCouple(event.target.value)}><option value="">Non précisé</option>{[1, 2, 3, 4].map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
+              <label>Pêché par<select value={catchPerson} onChange={(event) => setCatchPerson(event.target.value)}><option value="">Non précisé</option>{participantNames.map((name) => <option key={name} value={name}>{name}</option>)}</select></label>
               <label className="species-option"><input type="checkbox" checked={catchReleased} onChange={(event) => setCatchReleased(event.target.checked)} />Remis à l’eau</label>
               <button className="button button-dark button-full" type="submit" disabled={saving}>Ajouter au journal <span>↗</span></button>
             </form>

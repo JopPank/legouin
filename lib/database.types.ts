@@ -142,6 +142,7 @@ export type Database = {
           weight_kg: number | null;
           location: string;
           caught_by_couple_id: number | null;
+          caught_by: string;
           released: boolean;
           created_by_user: string;
           created_at: string;
@@ -152,6 +153,7 @@ export type Database = {
           weight_kg?: number | null;
           location?: string;
           caught_by_couple_id?: number | null;
+          caught_by?: string;
           released?: boolean;
           created_by_user?: string;
           created_at?: string;
@@ -162,6 +164,7 @@ export type Database = {
           weight_kg?: number | null;
           location?: string;
           caught_by_couple_id?: number | null;
+          caught_by?: string;
           released?: boolean;
           created_by_user?: string;
           created_at?: string;
