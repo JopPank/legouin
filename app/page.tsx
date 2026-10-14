@@ -9,7 +9,7 @@ type Profile = Database['public']['Tables']['profiles']['Row'];
 type Meal = Database['public']['Tables']['meal_plan']['Row'];
 type GearItem = Database['public']['Tables']['gear_checklist']['Row'];
 type Expense = Database['public']['Tables']['expenses']['Row'];
-type Tab = 'logistics' | 'gear' | 'groceries' | 'meals' | 'fishing' | 'expenses' | 'photos' | 'map' | 'safety';
+type Tab = 'logistics' | 'gear' | 'groceries' | 'meals' | 'fishing' | 'expenses' | 'photos' | 'map' | 'pourvoirie' | 'safety';
 type GroceryItem = Database['public']['Tables']['grocery_items']['Row'];
 type TripLogistics = Database['public']['Tables']['trip_logistics']['Row'];
 type FishingNotes = Database['public']['Tables']['fishing_notes']['Row'];
@@ -729,6 +729,9 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
           <p>Réservoir Gouin · Du 2 au 6 août 2027 · Huit amis, quatre couples</p>
         </div>
         <div className="sun-disc" aria-hidden="true" />
+        <a className="hero-logo" href="https://pourvoirielagalette.ca/" target="_blank" rel="noreferrer" aria-label="Site de la Pourvoirie Rivière La Galette">
+          <img src="/pourvoirie/logo.png" alt="Pourvoirie Rivière La Galette" />
+        </a>
       </section>
 
       <nav className="tabbar" aria-label="Sections du voyage">
@@ -741,7 +744,8 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
           ['expenses', '06', 'Dépenses'],
           ['photos', '07', 'Photos'],
           ['map', '08', 'Carte'],
-          ['safety', '09', 'Sécurité'],
+          ['pourvoirie', '09', 'Pourvoirie'],
+          ['safety', '10', 'Sécurité'],
         ] as const).map(([key, number, label]) => (
           <button key={key} className={`tab ${tab === key ? 'tab-active' : ''}`} onClick={() => setTab(key)}>
             <span className="tab-number">{number}</span>{label}
@@ -951,6 +955,37 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                   <p className="side-note">Point de départ : Pourvoirie Rivière La Galette (48°16′29″ N, 74°27′42″ O). Ne sert pas à la navigation; confirmez l’itinéraire et la mise à l’eau auprès du responsable de la location.</p>
                   <a className="map-link" href="https://www.google.com/maps/search/?api=1&query=48.27471,-74.461628" target="_blank" rel="noreferrer">Ouvrir dans Google Maps ↗</a>
                   <a className="map-link" href="https://pourvoirielagalette.ca/" target="_blank" rel="noreferrer">Site de la Pourvoirie Rivière La Galette ↗</a>
+                </section>
+              )}
+
+              {tab === 'pourvoirie' && (
+                <section className="section-block">
+                  <div className="section-heading"><div><span className="eyebrow">Notre base au Réservoir Gouin</span><h2>Pourvoirie Rivière La Galette</h2></div></div>
+                  <a className="map-link" href="https://pourvoirielagalette.ca/" target="_blank" rel="noreferrer">Site officiel de la pourvoirie ↗</a>
+
+                  <h3 className="info-subheading">Le bateau-maison</h3>
+                  <div className="pourvoirie-columns">
+                    <div>
+                      <strong className="list-title list-yes">Tous les forfaits bateaux-maisons incluent</strong>
+                      <ul className="plain-list">
+                        {['Sonar', 'GPS/sonar, carte bathymétrique', 'Ancre pour les chaloupes', 'Cuisine équipée', 'Cuisinière au propane, BBQ', 'Réfrigérateur à l’énergie solaire', 'Congélateur (génératrice en location)', 'Éclairage à l’énergie solaire', 'Toilette, douche, eau chaude', 'Système de radiocommunication avec la base', 'Trousse de premiers soins', 'Moteur Mercury 4 temps (STANDARD : 40 hp / DELUXE : 50 hp)', 'Lits simples superposés (STANDARD) ou lits simples (DELUXE)', 'Droits d’accès inclus (sauf forfait VIP)'].map((item) => <li key={item}>{item}</li>)}
+                      </ul>
+                    </div>
+                    <div>
+                      <strong className="list-title list-no">Non inclus : à apporter</strong>
+                      <ul className="plain-list">
+                        {['Literie (non disponible)', 'Vestes de sauvetage', 'Eau potable', 'Essence', 'Vers et sangsues'].map((item) => <li key={item}>{item}</li>)}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <h3 className="info-subheading">Comment s’y rendre</h3>
+                  <InfoLines items={[
+                    ['De Montréal (530 km)', 'Autoroute 15 Nord, puis route 117 Nord jusqu’au Lac Saguay. 12 km après le lac, à droite vers Chute-St-Phillipe (route 311) et suivre les indications pour Mont-St-Michel, puis Parent. À Parent, à l’intersection (dépanneur), tout droit direction barrage Gouin jusqu’au km 53. Tourner à gauche au panneau de la Pourvoirie Rivière La Galette (3,5 km).'],
+                    ['De Québec par La Tuque (500 km)', 'Route 155 jusqu’à La Tuque, puis direction Wemotaci/Parent ou route 25 (177 km, Radio CB poste 10). À la fin de la route 25, direction barrage Gouin à droite via la route 13 (41 km). Au km 53, tourner à gauche vers la pourvoirie (3,5 km).'],
+                    ['De Gatineau/Ottawa (420 km)', 'Route 309 Nord jusqu’à Mont-Laurier, tout droit sur la 309 Nord jusqu’à Mont-Saint-Michel, puis direction Parent. À Parent, à l’intersection (dépanneur), tout droit direction barrage Gouin jusqu’au km 53. Tourner à gauche au panneau de la pourvoirie (3,5 km).'],
+                    ['Avertissement', 'Ne pas utiliser un GPS sur les routes gravelées au risque de vous perdre. Suivez les indications fournies par la pourvoirie.'],
+                  ]} />
                 </section>
               )}
 

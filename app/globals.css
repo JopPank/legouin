@@ -78,6 +78,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .hero-stats > div { display: grid; gap: 5px; }
 .stat-number { font: 500 27px/1 var(--serif); white-space: nowrap; }
 .stat-label { color: #c5d0c9; font-size: 9px; letter-spacing: .07em; text-transform: uppercase; }
+.hero-logo { position: absolute; top: 22px; right: 26px; z-index: 2; display: block; line-height: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 18px #0000004d; }
+.hero-logo img { width: 190px; height: auto; display: block; }
+.info-subheading { margin: 30px 0 12px; font: 600 21px/1.2 var(--serif); color: var(--forest); }
+.pourvoirie-columns { display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; }
+.list-title { display: block; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.list-yes { color: var(--forest); }
+.list-no { color: #9a4a2f; }
+.plain-list { margin: 0; padding-left: 18px; font-size: 12px; line-height: 1.8; }
 .sun-disc { position: absolute; top: -133px; right: 9%; width: 350px; height: 350px; border: 1px solid #ffffff20; border-radius: 50%; }
 .sun-disc::before, .sun-disc::after { position: absolute; content: ''; border: 1px solid #ffffff17; border-radius: 50%; }
 .sun-disc::before { inset: 28px; }
@@ -229,6 +237,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .stat-number { font-size: 22px; }
   .stat-label { max-width: 82px; font-size: 8px; line-height: 1.4; }
   .sun-disc { top: -150px; right: -145px; }
+  .pourvoirie-columns { grid-template-columns: 1fr; }
+  .hero-logo img { width: 140px; }
   .tabbar { justify-content: flex-start; gap: 18px; }
   .tab { min-height: 57px; gap: 6px; font-size: 11px; }
   .tab-arrow { margin-left: 1px; }
