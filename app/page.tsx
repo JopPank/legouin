@@ -1,9 +1,13 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import type { Database, MealType } from '@/lib/database.types';
 import { getSupabaseClient } from '@/lib/supabase';
+import {
+  applyOps, executeOp, flushQueue, isNetworkError, loadCache, loadQueue, newTempId, readStoredSession, saveCache, saveQueue,
+  type PendingOp,
+} from '@/lib/offline';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 type Meal = Database['public']['Tables']['meal_plan']['Row'];
@@ -16,6 +20,11 @@ type FishingNotes = Database['public']['Tables']['fishing_notes']['Row'];
 type FishCatch = Database['public']['Tables']['fish_catches']['Row'];
 type SafetyInfo = Database['public']['Tables']['safety_info']['Row'];
 type TripPhoto = { path: string; url: string };
+type BaseData = {
+  profile: Profile; profiles: Profile[]; meals: Meal[]; gear: GearItem[]; expenses: Expense[]; groceries: GroceryItem[];
+  logistics: TripLogistics | null; fishing: FishingNotes | null; safety: SafetyInfo | null; catches: FishCatch[];
+};
+type MutationInput = Omit<PendingOp, 'id' | 'queuedAt' | 'tempId'>;
 
 const gearCategories = ['Kitchen', 'Shelter', 'Food & water', 'Safety', 'Personal', 'Other'];
 const gearCategoryLabels: Record<string, string> = {
@@ -343,6 +352,62 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
     operator_contact: '', medical_services: '', emergency_contacts: '', boat_instructions: '',
   });
   const [nameDraft, setNameDraft] = useState('');
+  const [online, setOnline] = useState(true);
+  const [pendingCount, setPendingCount] = useState(0);
+  const baseRef = useRef<BaseData | null>(null);
+  const syncingRef = useRef(false);
+
+  const showData = useCallback((base: BaseData) => {
+    baseRef.current = base;
+    const queue = loadQueue(user.id);
+    setPendingCount(queue.length);
+    setProfile(base.profile);
+    setProfiles(base.profiles);
+    setMeals(applyOps('meal_plan', base.meals, queue, {
+      insertDefaults: { assigned_couple_id: null, menu_details: null },
+      addAt: 'end',
+      matchesUpsert: (row, values) => row.day_number === values.day_number && row.meal_type === values.meal_type,
+    }));
+    setGear(applyOps('gear_checklist', base.gear, queue, {
+      insertDefaults: { is_communal: true, claimed_by_user: null, is_packed: false, assigned_couple_id: null }, addAt: 'end',
+    }));
+    setExpenses(applyOps('expenses', base.expenses, queue, { insertDefaults: {}, addAt: 'start' }));
+    setGroceries(applyOps('grocery_items', base.groceries, queue, {
+      insertDefaults: { quantity: '', assigned_couple_id: null, is_bought: false, created_by_user: user.id }, addAt: 'end',
+    }));
+    setCatches(applyOps('fish_catches', base.catches, queue, {
+      insertDefaults: { caught_by_couple_id: null, weight_kg: null, location: '', caught_by: '', released: false, created_by_user: user.id },
+      addAt: 'start',
+    }));
+    setLogistics(base.logistics && applyOps('trip_logistics', [base.logistics], queue, { insertDefaults: {} })[0]);
+    setFishingNotes(base.fishing && applyOps('fishing_notes', [base.fishing], queue, { insertDefaults: {} })[0]);
+    setSafetyInfo(base.safety && applyOps('safety_info', [base.safety], queue, { insertDefaults: {} })[0]);
+  }, [user.id]);
+
+  const adoptBase = useCallback((base: BaseData) => {
+    setNameDraft(base.profile.full_name);
+    setLogisticsDraft({
+      departure_details: base.logistics?.departure_details ?? '',
+      return_details: base.logistics?.return_details ?? '',
+      meeting_place: base.logistics?.meeting_place ?? '',
+      transport_plan: base.logistics?.transport_plan ?? '',
+      rental_details: base.logistics?.rental_details ?? '',
+      booking_notes: base.logistics?.booking_notes ?? '',
+    });
+    setFishingDraft({
+      target_species: base.fishing?.target_species ?? '',
+      license_reminders: base.fishing?.license_reminders ?? '',
+      bait_tackle_notes: base.fishing?.bait_tackle_notes ?? '',
+      local_notes: base.fishing?.local_notes ?? '',
+    });
+    setSafetyDraft({
+      operator_contact: base.safety?.operator_contact ?? '',
+      medical_services: base.safety?.medical_services ?? '',
+      emergency_contacts: base.safety?.emergency_contacts ?? '',
+      boat_instructions: base.safety?.boat_instructions ?? '',
+    });
+    showData(base);
+  }, [showData]);
 
   const refreshData = useCallback(async () => {
     if (!supabase) return;
@@ -364,6 +429,13 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
       const failure = [profileResult, profilesResult, mealsResult, gearResult, expensesResult, groceriesResult, logisticsResult, fishingResult, safetyResult, catchesResult]
         .find((result) => result.error);
       if (failure?.error) {
+        const cached = loadCache<BaseData>(user.id);
+        if (cached && (isNetworkError(failure.error.message) || !navigator.onLine)) {
+          adoptBase(cached);
+          setError('');
+          setLoading(false);
+          return;
+        }
         setError(failure.error.message);
         setLoading(false);
         return;
@@ -374,45 +446,34 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
         return;
       }
 
-      setProfile(profileResult.data);
-      setNameDraft(profileResult.data.full_name);
-      setProfiles(profilesResult.data ?? []);
-      setMeals(mealsResult.data ?? []);
-      setGear(gearResult.data ?? []);
-      setExpenses(expensesResult.data ?? []);
-      setGroceries(groceriesResult.data ?? []);
-      setLogistics(logisticsResult.data);
-      setFishingNotes(fishingResult.data);
-      setCatches(catchesResult.data ?? []);
-      setSafetyInfo(safetyResult.data);
-      setLogisticsDraft({
-        departure_details: logisticsResult.data?.departure_details ?? '',
-        return_details: logisticsResult.data?.return_details ?? '',
-        meeting_place: logisticsResult.data?.meeting_place ?? '',
-        transport_plan: logisticsResult.data?.transport_plan ?? '',
-        rental_details: logisticsResult.data?.rental_details ?? '',
-        booking_notes: logisticsResult.data?.booking_notes ?? '',
-      });
-      setFishingDraft({
-        target_species: fishingResult.data?.target_species ?? '',
-        license_reminders: fishingResult.data?.license_reminders ?? '',
-        bait_tackle_notes: fishingResult.data?.bait_tackle_notes ?? '',
-        local_notes: fishingResult.data?.local_notes ?? '',
-      });
-      setSafetyDraft({
-        operator_contact: safetyResult.data?.operator_contact ?? '',
-        medical_services: safetyResult.data?.medical_services ?? '',
-        emergency_contacts: safetyResult.data?.emergency_contacts ?? '',
-        boat_instructions: safetyResult.data?.boat_instructions ?? '',
-      });
+      const base: BaseData = {
+        profile: profileResult.data,
+        profiles: profilesResult.data ?? [],
+        meals: mealsResult.data ?? [],
+        gear: gearResult.data ?? [],
+        expenses: expensesResult.data ?? [],
+        groceries: groceriesResult.data ?? [],
+        logistics: logisticsResult.data,
+        fishing: fishingResult.data,
+        safety: safetyResult.data,
+        catches: catchesResult.data ?? [],
+      };
+      saveCache(user.id, base);
+      adoptBase(base);
       void refreshPhotos();
       setError('');
       setLoading(false);
     } catch (loadError) {
-      setError(getErrorMessage(loadError));
+      const cached = loadCache<BaseData>(user.id);
+      if (cached) {
+        adoptBase(cached);
+        setError('');
+      } else {
+        setError(getErrorMessage(loadError));
+      }
       setLoading(false);
     }
-  }, [supabase, user.id]);
+  }, [supabase, user.id, adoptBase]);
 
   useEffect(() => {
     void refreshData();
@@ -470,6 +531,79 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
     }
   }
 
+  const syncPending = useCallback(async () => {
+    if (!supabase || syncingRef.current || loadQueue(user.id).length === 0) return;
+    syncingRef.current = true;
+    try {
+      const { data } = await supabase.auth.getSession();
+      if (!data.session) return;
+      const result = await flushQueue(supabase, user.id);
+      if (result.synced > 0) setToast(`${result.synced} modification${result.synced === 1 ? ' synchronisée' : 's synchronisées'}`);
+      if (result.failures.length > 0) setError(`Certaines modifications n’ont pas pu être synchronisées : ${result.failures.join(' ; ')}`);
+      await refreshData();
+    } catch {
+      // Still offline: the queue is kept and retried.
+    } finally {
+      syncingRef.current = false;
+    }
+  }, [supabase, user.id, refreshData]);
+
+  useEffect(() => {
+    setOnline(navigator.onLine);
+    const goOnline = () => { setOnline(true); void syncPending(); };
+    const goOffline = () => setOnline(false);
+    window.addEventListener('online', goOnline);
+    window.addEventListener('offline', goOffline);
+    const timer = window.setInterval(() => { void syncPending(); }, 20000);
+    void syncPending();
+    return () => {
+      window.removeEventListener('online', goOnline);
+      window.removeEventListener('offline', goOffline);
+      window.clearInterval(timer);
+    };
+  }, [syncPending]);
+
+  // Saves right away when online; otherwise keeps the change on this device and syncs it later.
+  async function mutate(input: MutationInput, success: string) {
+    if (!supabase) return false;
+    setSaving(true);
+    setError('');
+    try {
+      const op: PendingOp = {
+        ...input,
+        id: randomId(),
+        queuedAt: new Date().toISOString(),
+        tempId: input.kind === 'insert' || input.kind === 'upsert' ? newTempId() : undefined,
+      };
+      if (loadQueue(user.id).length === 0 && navigator.onLine) {
+        try {
+          const result = await executeOp(supabase, op);
+          if (!result.error) {
+            setToast(success);
+            await refreshData();
+            return true;
+          }
+          if (!isNetworkError(result.error.message)) {
+            setError(result.error.message);
+            return false;
+          }
+        } catch (thrown) {
+          if (!isNetworkError(getErrorMessage(thrown))) {
+            setError(getErrorMessage(thrown));
+            return false;
+          }
+        }
+      }
+      saveQueue(user.id, [...loadQueue(user.id), op]);
+      if (baseRef.current) showData(baseRef.current);
+      setToast(`${success} · synchronisé au retour du réseau`);
+      if (navigator.onLine) void syncPending();
+      return true;
+    } finally {
+      setSaving(false);
+    }
+  }
+
   async function saveMeal(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase) return;
@@ -478,14 +612,17 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
       setError('Choisissez un jour entre 1 et 5.');
       return;
     }
-    const ok = await perform(
-      () => supabase.from('meal_plan').upsert({
-        day_number: day,
-        meal_type: mealType,
-        assigned_couple_id: mealCouple ? Number(mealCouple) : null,
-        menu_details: mealDetails.trim() || null,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'day_number,meal_type' }),
+    const ok = await mutate(
+      {
+        table: 'meal_plan', kind: 'upsert', onConflict: 'day_number,meal_type',
+        values: {
+          day_number: day,
+          meal_type: mealType,
+          assigned_couple_id: mealCouple ? Number(mealCouple) : null,
+          menu_details: mealDetails.trim() || null,
+          updated_at: new Date().toISOString(),
+        },
+      },
       'Plan des repas mis à jour',
     );
     if (ok) setMealDetails('');
@@ -494,13 +631,16 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   async function addGear(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || !gearName.trim()) return;
-    const ok = await perform(
-      () => supabase.from('gear_checklist').insert({
-        item_name: gearName.trim(),
-        category: gearCategory,
-        is_communal: true,
-        assigned_couple_id: packingCouple ? Number(packingCouple) : null,
-      }),
+    const ok = await mutate(
+      {
+        table: 'gear_checklist', kind: 'insert',
+        values: {
+          item_name: gearName.trim(),
+          category: gearCategory,
+          is_communal: true,
+          assigned_couple_id: packingCouple ? Number(packingCouple) : null,
+        },
+      },
       'Article ajouté à la liste',
     );
     if (ok) {
@@ -514,16 +654,16 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
     const update = change === 'claim'
       ? { claimed_by_user: item.claimed_by_user === user.id ? null : user.id }
       : { is_packed: !item.is_packed };
-    await perform(
-      () => supabase.from('gear_checklist').update(update).eq('id', item.id),
+    await mutate(
+      { table: 'gear_checklist', kind: 'update', values: update, matchId: item.id },
       change === 'claim' ? (item.claimed_by_user === user.id ? 'Article désattribué' : 'Article attribué') : 'Liste des bagages mise à jour',
     );
   }
 
   async function assignGear(item: GearItem, coupleId: string) {
     if (!supabase) return;
-    await perform(
-      () => supabase.from('gear_checklist').update({ assigned_couple_id: coupleId ? Number(coupleId) : null }).eq('id', item.id),
+    await mutate(
+      { table: 'gear_checklist', kind: 'update', values: { assigned_couple_id: coupleId ? Number(coupleId) : null }, matchId: item.id },
       'Responsable de l’article mis à jour',
     );
   }
@@ -540,15 +680,18 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
       setError('Saisissez une description pour cette dépense.');
       return;
     }
-    const ok = await perform(
-      () => supabase.from('expenses').insert({
-        description: expenseDescription.trim(),
-        amount,
-        paid_by_user: user.id,
-        paid_by_couple_id: Number(expenseCouple || profile?.couple_id),
-        split_type: 'equal',
-        category: expenseCategory,
-      }),
+    const ok = await mutate(
+      {
+        table: 'expenses', kind: 'insert',
+        values: {
+          description: expenseDescription.trim(),
+          amount,
+          paid_by_user: user.id,
+          paid_by_couple_id: Number(expenseCouple || profile?.couple_id),
+          split_type: 'equal',
+          category: expenseCategory,
+        },
+      },
       'Dépense ajoutée',
     );
     if (ok) {
@@ -561,12 +704,15 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   async function addGrocery(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || !groceryName.trim()) return;
-    const ok = await perform(
-      () => supabase.from('grocery_items').insert({
-        item_name: groceryName.trim(),
-        quantity: groceryQuantity.trim(),
-        assigned_couple_id: groceryCouple ? Number(groceryCouple) : null,
-      }),
+    const ok = await mutate(
+      {
+        table: 'grocery_items', kind: 'insert',
+        values: {
+          item_name: groceryName.trim(),
+          quantity: groceryQuantity.trim(),
+          assigned_couple_id: groceryCouple ? Number(groceryCouple) : null,
+        },
+      },
       'Article ajouté à la liste d’épicerie',
     );
     if (ok) {
@@ -577,15 +723,15 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
   async function updateGrocery(item: GroceryItem) {
     if (!supabase) return;
-    await perform(
-      () => supabase.from('grocery_items').update({ is_bought: !item.is_bought }).eq('id', item.id),
+    await mutate(
+      { table: 'grocery_items', kind: 'update', values: { is_bought: !item.is_bought }, matchId: item.id },
       item.is_bought ? 'Article décoché' : 'Article marqué comme acheté',
     );
   }
 
   async function deleteGrocery(item: GroceryItem) {
     if (!supabase) return;
-    await perform(() => supabase.from('grocery_items').delete().eq('id', item.id), 'Article retiré de la liste');
+    await mutate({ table: 'grocery_items', kind: 'delete', matchId: item.id }, 'Article retiré de la liste');
   }
 
   async function addCatch(event: FormEvent<HTMLFormElement>) {
@@ -596,14 +742,17 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
       setError('Entrez un poids valide en kg, ou cochez « Poids inconnu ».');
       return;
     }
-    const ok = await perform(
-      () => supabase.from('fish_catches').insert({
-        species: catchSpecies,
-        weight_kg: weight,
-        location: catchLocation.trim(),
-        caught_by: catchPerson || defaultCatcher,
-        released: catchReleased,
-      }),
+    const ok = await mutate(
+      {
+        table: 'fish_catches', kind: 'insert',
+        values: {
+          species: catchSpecies,
+          weight_kg: weight,
+          location: catchLocation.trim(),
+          caught_by: catchPerson || defaultCatcher,
+          released: catchReleased,
+        },
+      },
       'Prise ajoutée au journal',
     );
     if (ok) {
@@ -615,7 +764,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
   async function deleteCatch(item: FishCatch) {
     if (!supabase) return;
-    await perform(() => supabase.from('fish_catches').delete().eq('id', item.id), 'Prise retirée du journal');
+    await mutate({ table: 'fish_catches', kind: 'delete', matchId: item.id }, 'Prise retirée du journal');
   }
 
   async function saveTripDetails(
@@ -624,8 +773,8 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
     success: string,
   ) {
     if (!supabase) return;
-    await perform(
-      () => supabase.from(table).upsert({ id: 1, ...values, updated_at: new Date().toISOString() }),
+    await mutate(
+      { table, kind: 'upsert', values: { id: 1, ...values, updated_at: new Date().toISOString() } },
       success,
     );
   }
@@ -667,6 +816,10 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
   async function uploadPhotos(files: FileList | null) {
     if (!supabase || !files?.length) return;
+    if (!navigator.onLine) {
+      setError('Les photos demandent une connexion Internet. Réessayez quand vous aurez du réseau.');
+      return;
+    }
     setSaving(true);
     setError('');
     let uploadedAny = false;
@@ -713,8 +866,8 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
   async function deleteExpense(expense: Expense) {
     if (!supabase) return;
-    await perform(
-      () => supabase.from('expenses').delete().eq('id', expense.id),
+    await mutate(
+      { table: 'expenses', kind: 'delete', matchId: expense.id },
       'Dépense supprimée',
     );
   }
@@ -797,7 +950,15 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
         ))}
       </nav>
 
-      {(error || realtimeError) && <div className="alert" role="alert"><span>{error || realtimeError}</span><button onClick={() => { setError(''); setRealtimeError(''); }} aria-label="Fermer le message d’erreur">×</button></div>}
+      {(!online || pendingCount > 0) && (
+        <div className="offline-banner" role="status">
+          {!online
+            ? `Hors ligne : vos modifications sont gardées sur cet appareil${pendingCount > 0 ? ` (${pendingCount} en attente)` : ''} et seront synchronisées au retour du réseau.`
+            : `${pendingCount} modification${pendingCount === 1 ? '' : 's'} en attente de synchronisation…`}
+        </div>
+      )}
+
+      {(error || (online && realtimeError)) && <div className="alert" role="alert"><span>{error || realtimeError}</span><button onClick={() => { setError(''); setRealtimeError(''); }} aria-label="Fermer le message d’erreur">×</button></div>}
 
       <section className="content-grid">
         <div className="main-column">
@@ -1258,16 +1419,20 @@ export default function Home() {
     let active = true;
     void supabase.auth.getSession().then(({ data, error }) => {
       if (!active) return;
-      if (error) setAuthError(`Impossible de restaurer votre session : ${error.message}`);
-      setSession(data.session);
+      const stored = data.session ? null : readStoredSession<Session>();
+      if (error && !stored) setAuthError(`Impossible de restaurer votre session : ${error.message}`);
+      setSession(data.session ?? stored);
       setCheckingSession(false);
     }).catch((error: unknown) => {
       if (!active) return;
-      setAuthError(`Impossible de restaurer votre session : ${getErrorMessage(error)}`);
+      const stored = readStoredSession<Session>();
+      if (stored) setSession(stored);
+      else setAuthError(`Impossible de restaurer votre session : ${getErrorMessage(error)}`);
       setCheckingSession(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      setSession(nextSession);
+      // Keep the saved session while offline; only an explicit sign-out clears it.
+      setSession((current) => nextSession ?? (event === 'SIGNED_OUT' ? null : current));
       if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
     });
     return () => {

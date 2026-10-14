@@ -129,6 +129,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .side-card .species-option input { width: auto; min-height: 0; accent-color: var(--forest); }
 .profile-details > summary { cursor: pointer; padding: 6px 2px; color: #858b83; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .profile-details[open] > summary { margin-bottom: 10px; }
+.offline-banner { margin: 12px 0 0; border: 1px solid #d9c27a; padding: 10px 14px; color: #5b4a12; background: #fbf3d4; font-size: 11px; font-weight: 600; }
 .catch-stats { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 16px; margin-bottom: 18px; border: 1px solid var(--line); padding: 14px 16px; }
 .catch-stats > div { display: grid; gap: 4px; align-content: start; }
 .catch-stats span { color: #8b6b4f; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
