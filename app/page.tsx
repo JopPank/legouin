@@ -439,6 +439,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
   const profileById = useMemo(() => new Map(profiles.map((item) => [item.id, item])), [profiles]);
   const coupleNames = useMemo(() => new Map([[1, 'Jop & Nat'], [2, 'Andréa & Alain'], [3, 'Ben & Pas'], [4, 'Jo & Chris'], [everyoneId, 'Tous']]), []);
+  const defaultCatcher = participantNames.find((name) => profile?.full_name.trim().toLowerCase().startsWith(name.toLowerCase())) ?? participantNames[0];
   const totalSpent = expenses.reduce((total, expense) => total + Number(expense.amount), 0);
   const packedCount = gear.filter((item) => item.is_packed).length;
   const coupleTotals = [1, 2, 3, 4].map((coupleId) => {
@@ -600,7 +601,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
         species: catchSpecies,
         weight_kg: weight,
         location: catchLocation.trim(),
-        caught_by: catchPerson,
+        caught_by: catchPerson || defaultCatcher,
         released: catchReleased,
       }),
       'Prise ajoutée au journal',
@@ -1137,7 +1138,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <label className="species-option"><input type="checkbox" checked={catchUnknownWeight} onChange={(event) => setCatchUnknownWeight(event.target.checked)} />Poids inconnu (petit poisson)</label>
               <label>Endroit<input value={catchLocation} onChange={(event) => setCatchLocation(event.target.value)} placeholder="Baie, île, point, profondeur…" list="catch-locations" /></label>
               <datalist id="catch-locations">{[...new Set(catches.map((item) => item.location).filter(Boolean))].map((name) => <option key={name} value={name} />)}</datalist>
-              <label>Pêché par<select value={catchPerson} onChange={(event) => setCatchPerson(event.target.value)}><option value="">Non précisé</option>{participantNames.map((name) => <option key={name} value={name}>{name}</option>)}</select></label>
+              <label>Pêché par<select value={catchPerson || defaultCatcher} onChange={(event) => setCatchPerson(event.target.value)}>{participantNames.map((name) => <option key={name} value={name}>{name}</option>)}</select></label>
               <label className="species-option"><input type="checkbox" checked={catchReleased} onChange={(event) => setCatchReleased(event.target.checked)} />Remis à l’eau</label>
               <button className="button button-dark button-full" type="submit" disabled={saving}>Ajouter au journal <span>↗</span></button>
             </form>
