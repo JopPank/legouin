@@ -1153,11 +1153,10 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                     <h3>Visite du bateau-maison</h3>
                     <div className="photo-grid">
                       {[
-                        ['houseboat-front.jpg', 'Bateau-maison sur l’eau'],
-                        ['houseboat-side.jpg', 'Vue extérieure'],
-                        ['houseboat-deck.jpg', 'Pont et entrée'],
-                        ['houseboat-kitchen.jpg', 'Cuisine'],
-                        ['houseboat-dining.jpg', 'Coin repas'],
+                        ['houseboat-front.jpg', 'Le bateau-maison'],
+                        ['houseboat-beach.jpg', 'Chaloupes et bateau-maison'],
+                        ['houseboat-deck.jpg', 'Le pont'],
+                        ['houseboat-night.jpg', 'Sous les étoiles'],
                       ].map(([file, label]) => (
                         <article className="photo-card" key={file}>
                           <img src={`/houseboat/${file}`} alt={label} />
@@ -1165,6 +1164,21 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                         </article>
                       ))}
                     </div>
+                    <h3>Ce qu’on espère pêcher</h3>
+                    <div className="photo-grid">
+                      {[
+                        ['brochet.jpg', 'Grand brochet'],
+                        ['brochet-peinture.jpg', 'Brochet (peinture de Bob Hines)'],
+                        ['dore.jpg', 'Doré jaune'],
+                        ['dore-2.jpg', 'Doré jaune'],
+                      ].map(([file, label]) => (
+                        <article className="photo-card" key={file}>
+                          <img src={`/fish/${file}`} alt={label} />
+                          <p>{label}</p>
+                        </article>
+                      ))}
+                    </div>
+                    <p className="side-note">Photos de poissons du domaine public (Wikimedia Commons, NARA, USFWS).</p>
                   </div>
                   {photos.length ? <div className="photo-grid">{photos.map((photo) => (
                     <article className="photo-card" key={photo.path}>
