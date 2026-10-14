@@ -947,9 +947,9 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               {tab === 'map' && (
                 <section className="section-block">
                   <div className="section-heading"><div><span className="eyebrow">Repérez votre coin de lac</span><h2>Réservoir Gouin</h2></div><span className="section-count">QUÉBEC, CANADA</span></div>
-                  <iframe className="trip-map" title="Carte OpenStreetMap du point de départ, Pourvoirie Rivière La Galette" src="https://www.openstreetmap.org/export/embed.html?bbox=-74.50%2C48.25%2C-74.42%2C48.30&layer=mapnik&marker=48.27471%2C-74.461628" loading="lazy" referrerPolicy="no-referrer" />
+                  <iframe className="trip-map" title="Carte Google Maps du point de départ, Pourvoirie Rivière La Galette" src="https://maps.google.com/maps?q=48.27471,-74.461628&z=14&output=embed" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
                   <p className="side-note">Point de départ : Pourvoirie Rivière La Galette (48°16′29″ N, 74°27′42″ O). Ne sert pas à la navigation; confirmez l’itinéraire et la mise à l’eau auprès du responsable de la location.</p>
-                  <a className="map-link" href="https://www.openstreetmap.org/?mlat=48.27471&mlon=-74.461628#map=14/48.27471/-74.461628" target="_blank" rel="noreferrer">Ouvrir une carte plus détaillée ↗</a>
+                  <a className="map-link" href="https://www.google.com/maps/search/?api=1&query=48.27471,-74.461628" target="_blank" rel="noreferrer">Ouvrir dans Google Maps ↗</a>
                   <a className="map-link" href="https://pourvoirielagalette.ca/" target="_blank" rel="noreferrer">Site de la Pourvoirie Rivière La Galette ↗</a>
                 </section>
               )}
