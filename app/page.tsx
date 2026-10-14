@@ -1219,12 +1219,6 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                       </ul>
                     </div>
                   </div>
-
-                  <h3 className="info-subheading">Comment s’y rendre (départ de Gatineau)</h3>
-                  <InfoLines items={[
-                    ['De Gatineau/Ottawa (420 km)', 'Route 309 Nord jusqu’à Mont-Laurier, tout droit sur la 309 Nord jusqu’à Mont-Saint-Michel, puis direction Parent. À Parent, à l’intersection (dépanneur), tout droit direction barrage Gouin jusqu’au km 53. Tourner à gauche au panneau de la pourvoirie (3,5 km).'],
-                    ['Avertissement', 'Ne pas utiliser un GPS sur les routes gravelées au risque de vous perdre. Suivez les indications fournies par la pourvoirie.'],
-                  ]} />
                 </section>
               )}
 
@@ -1241,6 +1235,14 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
         </div>
 
         <aside className="sidebar">
+          {tab === 'map' && (
+            <div className="side-card">
+              <span className="eyebrow">Départ de Gatineau · 420 km</span><h3>Comment s’y rendre</h3>
+              <p className="side-note">Route 309 Nord jusqu’à Mont-Laurier, tout droit sur la 309 Nord jusqu’à Mont-Saint-Michel, puis direction Parent. À Parent, à l’intersection (dépanneur), tout droit direction barrage Gouin jusqu’au km 53. Tourner à gauche au panneau de la pourvoirie (3,5 km).</p>
+              <p className="side-note"><strong>Avertissement :</strong> ne pas utiliser un GPS sur les routes gravelées au risque de vous perdre. Suivez les indications fournies par la pourvoirie.</p>
+            </div>
+          )}
+
           {tab === 'logistics' && (
             <form className="side-card" onSubmit={(event) => { event.preventDefault(); void saveTripDetails('trip_logistics', logisticsDraft, 'Logistique mise à jour'); }}>
               <span className="eyebrow">Aller et revenir</span><h3>Ajouter les détails</h3>
