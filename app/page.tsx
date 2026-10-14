@@ -13,7 +13,7 @@ type Profile = Database['public']['Tables']['profiles']['Row'];
 type Meal = Database['public']['Tables']['meal_plan']['Row'];
 type GearItem = Database['public']['Tables']['gear_checklist']['Row'];
 type Expense = Database['public']['Tables']['expenses']['Row'];
-type Tab = 'logistics' | 'gear' | 'groceries' | 'meals' | 'fishing' | 'expenses' | 'photos' | 'map' | 'pourvoirie' | 'safety';
+type Tab = 'logistics' | 'gear' | 'beforeYouGo' | 'groceries' | 'meals' | 'fishing' | 'expenses' | 'photos' | 'map' | 'pourvoirie' | 'safety';
 type GroceryItem = Database['public']['Tables']['grocery_items']['Row'];
 type TripLogistics = Database['public']['Tables']['trip_logistics']['Row'];
 type FishingNotes = Database['public']['Tables']['fishing_notes']['Row'];
@@ -42,6 +42,49 @@ const assigneeIds = [1, 2, 3, 4, everyoneId];
 const fishSpecies = ['Doré jaune', 'Grand brochet', 'Grand corégone', 'Touladi', 'Omble de fontaine', 'Perchaude', 'Lotte'];
 const otherSpecies = 'Autre espèce';
 const participantNames = ['Jop', 'Nat', 'Andréa', 'Alain', 'Ben', 'Pas', 'Jo', 'Chris'];
+const beforeYouGoGroups = [
+  {
+    title: 'Numérique et technologie',
+    reminders: [
+      'Télécharger des listes de lecture, balados ou films pour les écouter hors ligne.',
+      'Télécharger les cartes hors ligne du réservoir Gouin et de la Haute-Mauricie (Google Maps, Navionics ou Gaia GPS).',
+      'Charger à 100 % les batteries externes, lampes frontales, batteries d’appareil photo et haut-parleurs portatifs.',
+    ],
+  },
+  {
+    title: 'Permis et démarches',
+    reminders: [
+      'Acheter le permis de pêche du Québec pour la zone 14 et en télécharger ou imprimer une copie pour chaque pêcheur.',
+      'Acheter le droit de pêche obligatoire de l’AFC Gouin pour chaque pêcheur.',
+      'Vérifier qu’au moins une personne qui conduira une chaloupe ou le bateau-maison a sa carte de conducteur d’embarcation de plaisance (CCEP), sur elle ou dans son téléphone.',
+      'Retirer de l’argent comptant avant de quitter les grands centres; les cartes ne sont pas toujours acceptées en région éloignée.',
+    ],
+  },
+  {
+    title: 'Décisions et logistique de groupe',
+    reminders: [
+      'Confirmer le lieu et l’heure du rendez-vous et du départ en convoi, par exemple à la dernière station-service avant la route forestière R0400.',
+      'Répartir les rôles à bord : capitaine, chef pour chaque soirée et personnes responsables de nettoyer et fileter les poissons.',
+      'Établir un plan de sortie et les consignes d’urgence; transmettre à un proche les coordonnées de la pourvoirie, les numéros des appareils satellites et l’heure de retour prévue.',
+    ],
+  },
+  {
+    title: 'Véhicule et itinéraire',
+    reminders: [
+      'Vérifier les pneus de secours, la pression des pneus et la présence d’un cric et d’une clé de roue fonctionnels.',
+      'Faire le plein à la dernière station-service accessible, par exemple à Parent ou à Mont-Laurier, avant d’emprunter les routes forestières.',
+      'Imprimer les indications routières ou en faire des captures d’écran; le GPS peut proposer de mauvais détours sur les chemins forestiers.',
+    ],
+  },
+  {
+    title: 'Repas et glacières',
+    reminders: [
+      'Congeler les plats préparés (sauce à spaghetti, chili) et les viandes marinées 48 heures à l’avance; ils serviront aussi de blocs réfrigérants.',
+      'Prérefroidir les glacières avec de la glace 24 heures avant d’y mettre les aliments frais.',
+      'Préparer les vers dans une litière humide et les garder au frais dans une glacière.',
+    ],
+  },
+];
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Une erreur inattendue est survenue.';
@@ -935,14 +978,15 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
         {([
           ['logistics', '01', 'Logistique'],
           ['gear', '02', 'Bagages'],
-          ['groceries', '03', 'Épicerie'],
-          ['meals', '04', 'Repas'],
-          ['fishing', '05', 'Pêche'],
-          ['expenses', '06', 'Dépenses'],
-          ['photos', '07', 'Photos'],
-          ['map', '08', 'Carte'],
-          ['pourvoirie', '09', 'Pourvoirie'],
-          ['safety', '10', 'Sécurité'],
+          ['beforeYouGo', '03', 'À faire'],
+          ['groceries', '04', 'Épicerie'],
+          ['meals', '05', 'Repas'],
+          ['fishing', '06', 'Pêche'],
+          ['expenses', '07', 'Dépenses'],
+          ['photos', '08', 'Photos'],
+          ['map', '09', 'Carte'],
+          ['pourvoirie', '10', 'Pourvoirie'],
+          ['safety', '11', 'Sécurité'],
         ] as const).map(([key, number, label]) => (
           <button key={key} className={`tab ${tab === key ? 'tab-active' : ''}`} onClick={() => setTab(key)}>
             <span className="tab-number">{number}</span>{label}
@@ -1043,6 +1087,25 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                   ))}
                 </div>
               )}
+            </section>
+          )}
+
+          {tab === 'beforeYouGo' && (
+            <section className="section-block">
+              <div className="section-heading">
+                <div><span className="eyebrow">Les préparatifs avant de partir</span><h2>À faire avant le voyage</h2></div>
+              </div>
+              <p className="side-note before-you-go-intro">Quelques rappels pour préparer le groupe et le trajet vers le réservoir Gouin, où le réseau cellulaire peut être limité.</p>
+              <div className="reminder-groups">
+                {beforeYouGoGroups.map(({ title, reminders }) => (
+                  <section className="reminder-group" key={title}>
+                    <h3>{title}</h3>
+                    <ul>
+                      {reminders.map((reminder) => <li key={reminder}>{reminder}</li>)}
+                    </ul>
+                  </section>
+                ))}
+              </div>
             </section>
           )}
 

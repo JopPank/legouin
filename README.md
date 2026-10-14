@@ -6,6 +6,7 @@ Application privée en français canadien pour le voyage au réservoir Gouin, du
 
 - Logistique : départ et retour, point de rencontre, covoiturage, détails de location et réservation.
 - Bagages : articles par catégorie, couple responsable, attribution personnelle et état « prêt ».
+- À faire avant le voyage : rappels de préparation regroupés par sujet, distincts de la liste des bagages.
 - Épicerie : articles, quantités, couple responsable des achats et état « acheté ».
 - Repas : déjeuner, dîner et souper pour chacune des cinq journées; menu et couple responsable facultatifs.
 - Pêche : espèces visées, rappels de permis, matériel et notes locales.

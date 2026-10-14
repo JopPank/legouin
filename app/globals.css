@@ -161,6 +161,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .group-title { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-size: 11px; font-weight: 700; }
 .group-title span { min-width: 18px; border-radius: 20px; padding: 3px 5px; color: #737c72; background: #e9e9df; font-size: 9px; text-align: center; }
 .gear-list { border-top: 1px solid var(--line); }
+.before-you-go-intro { margin: -10px 0 22px; font-size: 12px; }
+.reminder-groups { display: grid; gap: 15px; }
+.reminder-group { border: 1px solid var(--line); border-top: 3px solid var(--forest); padding: 18px 20px; background: var(--white); }
+.reminder-group:nth-child(even) { border-top-color: #998269; }
+.reminder-group h3 { margin: 0 0 10px; color: var(--forest); font: 500 20px/1.25 var(--serif); }
+.reminder-group ul { display: grid; gap: 9px; margin: 0; padding-left: 19px; color: #4d5850; font-size: 11px; line-height: 1.65; }
+.reminder-group li { padding-left: 3px; }
+.reminder-group li::marker { color: #998269; }
 .gear-row { min-height: 60px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--line); padding: 9px 2px; }
 .check-button { width: 19px; height: 19px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid #bdc6ba; border-radius: 50%; color: transparent; background: transparent; font-size: 10px; cursor: pointer; }
 .check-button:hover { border-color: var(--forest); }
