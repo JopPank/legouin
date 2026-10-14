@@ -1201,10 +1201,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                     ['Hébergement', 'Bateau-maison avec 4 chambres fermées, capacité maximale de 8 personnes'],
                     ['Inclus', 'Droit de pêche journalier au réservoir Gouin · génératrice 2500 watts · 1 chaloupe de 16′ en aluminium avec 1 moteur (15 ou 20 c.v.) par 2 adultes · 1 congélateur 110 V à l’extérieur · couverture Hélico Secours durant le séjour à la pourvoirie'],
                     ['Arrivée / départ', 'Prise de possession à 13 h · retour au plus tard à 9 h'],
-                    ['Coût', 'Total de 5 578,16 $ taxes incluses (soumission nº 448 du 3 octobre 2026), soit environ 1 394,54 $ par couple. Rabais appliqués pour 1 chaloupe et 3 droits de pêche non utilisés.'],
-                    ['Dépôt', '50 % non remboursable et non transférable (reportable à une date ultérieure en cas d’interdiction d’accès au territoire). À payer dans les 2 semaines suivant la réception de la soumission, sans quoi la disponibilité ne peut être garantie. La soumission expire le 1er janvier 2027.'],
-                    ['Paiement', 'Argent, chèque ou virement Interac'],
-                    ['Attention', 'Essence à acheter à la pourvoirie · literie, oreillers, papier hygiénique et linge à vaisselle non fournis · eau non potable (prévoir des réserves) · vers et sangsues en vente à la pourvoirie · tous les bris aux équipements sont aux frais des clients'],
+                    ['Attention',  'Essence à acheter à la pourvoirie · literie, oreillers, papier hygiénique et linge à vaisselle non fournis · eau non potable (prévoir des réserves) · vers et sangsues en vente à la pourvoirie · tous les bris aux équipements sont aux frais des clients'],
                   ]} />
 
                   <h3 className="info-subheading">Le bateau-maison (forfaits en général)</h3>
