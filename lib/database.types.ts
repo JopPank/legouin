@@ -135,6 +135,39 @@ export type Database = {
         };
         Relationships: [];
       };
+      fish_catches: {
+        Row: {
+          id: number;
+          species: string;
+          weight_kg: number | null;
+          location: string;
+          caught_by_couple_id: number | null;
+          released: boolean;
+          created_by_user: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          species: string;
+          weight_kg?: number | null;
+          location?: string;
+          caught_by_couple_id?: number | null;
+          released?: boolean;
+          created_by_user?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          species?: string;
+          weight_kg?: number | null;
+          location?: string;
+          caught_by_couple_id?: number | null;
+          released?: boolean;
+          created_by_user?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       trip_logistics: {
         Row: {
           id: number;

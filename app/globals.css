@@ -129,6 +129,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .side-card .species-option input { width: auto; min-height: 0; accent-color: var(--forest); }
 .profile-details > summary { cursor: pointer; padding: 6px 2px; color: #858b83; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .profile-details[open] > summary { margin-bottom: 10px; }
+.catch-stats { display: grid; grid-template-columns: 1fr 1fr 2fr; gap: 16px; margin-bottom: 18px; border: 1px solid var(--line); padding: 14px 16px; }
+.catch-stats > div { display: grid; gap: 4px; align-content: start; }
+.catch-stats span { color: #8b6b4f; font-size: 9px; font-weight: 700; letter-spacing: .12em; }
+.catch-stats strong { color: var(--forest); font: 500 25px/1 var(--serif); }
+.catch-stats small { color: #566058; font-size: 10px; line-height: 1.5; }
+.catch-weight { width: 62px; display: grid; justify-items: center; color: var(--forest); font: 600 22px/1 var(--serif); }
+.catch-weight small { margin-top: 3px; color: #899087; font: 400 8px var(--sans); text-align: center; }
+.prep-notes { margin-top: 26px; }
+.prep-notes > summary { cursor: pointer; padding: 6px 0 12px; color: #858b83; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+@media (max-width: 700px) { .catch-stats { grid-template-columns: 1fr; } }
 .empty-state { display: grid; justify-items: center; border: 1px dashed #d9d8ce; padding: 50px 20px; text-align: center; }
 .empty-spark { color: #a77e5e; font-size: 20px; }
 .empty-state h3 { margin: 12px 0 5px; font: 500 20px var(--serif); }

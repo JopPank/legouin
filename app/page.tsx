@@ -13,6 +13,7 @@ type Tab = 'logistics' | 'gear' | 'groceries' | 'meals' | 'fishing' | 'expenses'
 type GroceryItem = Database['public']['Tables']['grocery_items']['Row'];
 type TripLogistics = Database['public']['Tables']['trip_logistics']['Row'];
 type FishingNotes = Database['public']['Tables']['fishing_notes']['Row'];
+type FishCatch = Database['public']['Tables']['fish_catches']['Row'];
 type SafetyInfo = Database['public']['Tables']['safety_info']['Row'];
 type TripPhoto = { path: string; url: string };
 
@@ -29,6 +30,7 @@ const tripPhotoBucket = 'trip-photos';
 const everyoneId = 5;
 const assigneeIds = [1, 2, 3, 4, everyoneId];
 const fishSpecies = ['Doré jaune', 'Grand brochet', 'Grand corégone', 'Touladi', 'Omble de fontaine', 'Perchaude', 'Lotte'];
+const otherSpecies = 'Autre espèce';
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Une erreur inattendue est survenue.';
@@ -300,6 +302,13 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const [groceries, setGroceries] = useState<GroceryItem[]>([]);
   const [logistics, setLogistics] = useState<TripLogistics | null>(null);
   const [fishingNotes, setFishingNotes] = useState<FishingNotes | null>(null);
+  const [catches, setCatches] = useState<FishCatch[]>([]);
+  const [catchSpecies, setCatchSpecies] = useState(fishSpecies[0]);
+  const [catchWeight, setCatchWeight] = useState('');
+  const [catchUnknownWeight, setCatchUnknownWeight] = useState(false);
+  const [catchLocation, setCatchLocation] = useState('');
+  const [catchCouple, setCatchCouple] = useState('');
+  const [catchReleased, setCatchReleased] = useState(false);
   const [safetyInfo, setSafetyInfo] = useState<SafetyInfo | null>(null);
   const [photos, setPhotos] = useState<TripPhoto[]>([]);
   const [tab, setTab] = useState<Tab>('logistics');
@@ -337,7 +346,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const refreshData = useCallback(async () => {
     if (!supabase) return;
     try {
-      const [profileResult, profilesResult, mealsResult, gearResult, expensesResult, groceriesResult, logisticsResult, fishingResult, safetyResult] =
+      const [profileResult, profilesResult, mealsResult, gearResult, expensesResult, groceriesResult, logisticsResult, fishingResult, safetyResult, catchesResult] =
         await Promise.all([
           supabase.from('profiles').select('*').eq('id', user.id).single(),
           supabase.from('profiles').select('*').order('couple_id'),
@@ -348,9 +357,10 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
           supabase.from('trip_logistics').select('*').eq('id', 1).maybeSingle(),
           supabase.from('fishing_notes').select('*').eq('id', 1).maybeSingle(),
           supabase.from('safety_info').select('*').eq('id', 1).maybeSingle(),
+          supabase.from('fish_catches').select('*').order('created_at', { ascending: false }),
         ]);
 
-      const failure = [profileResult, profilesResult, mealsResult, gearResult, expensesResult, groceriesResult, logisticsResult, fishingResult, safetyResult]
+      const failure = [profileResult, profilesResult, mealsResult, gearResult, expensesResult, groceriesResult, logisticsResult, fishingResult, safetyResult, catchesResult]
         .find((result) => result.error);
       if (failure?.error) {
         setError(failure.error.message);
@@ -372,6 +382,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
       setGroceries(groceriesResult.data ?? []);
       setLogistics(logisticsResult.data);
       setFishingNotes(fishingResult.data);
+      setCatches(catchesResult.data ?? []);
       setSafetyInfo(safetyResult.data);
       setLogisticsDraft({
         departure_details: logisticsResult.data?.departure_details ?? '',
@@ -573,6 +584,36 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   async function deleteGrocery(item: GroceryItem) {
     if (!supabase) return;
     await perform(() => supabase.from('grocery_items').delete().eq('id', item.id), 'Article retiré de la liste');
+  }
+
+  async function addCatch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase) return;
+    const weight = catchUnknownWeight ? null : Number(catchWeight.replace(',', '.'));
+    if (weight !== null && (!Number.isFinite(weight) || weight <= 0)) {
+      setError('Entrez un poids valide en kg, ou cochez « Poids inconnu ».');
+      return;
+    }
+    const ok = await perform(
+      () => supabase.from('fish_catches').insert({
+        species: catchSpecies,
+        weight_kg: weight,
+        location: catchLocation.trim(),
+        caught_by_couple_id: catchCouple ? Number(catchCouple) : null,
+        released: catchReleased,
+      }),
+      'Prise ajoutée au journal',
+    );
+    if (ok) {
+      setCatchWeight('');
+      setCatchUnknownWeight(false);
+      setCatchReleased(false);
+    }
+  }
+
+  async function deleteCatch(item: FishCatch) {
+    if (!supabase) return;
+    await perform(() => supabase.from('fish_catches').delete().eq('id', item.id), 'Prise retirée du journal');
   }
 
   async function saveTripDetails(
@@ -861,12 +902,40 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
           {tab === 'fishing' && (
             <section className="section-block">
-              <div className="section-heading"><div><span className="eyebrow">Préparer la sortie</span><h2>Notes de pêche</h2></div></div>
-              <InfoLines items={[
-                ['Espèces visées', fishingNotes?.target_species], ['Rappel pour les permis', fishingNotes?.license_reminders],
-                ['Leurres et matériel', fishingNotes?.bait_tackle_notes], ['Notes locales', fishingNotes?.local_notes],
-              ]} />
-              <p className="side-note">Vérifiez les règles officielles, les permis, les saisons et les limites de prises en vigueur au Québec avant le départ.</p>
+              <div className="section-heading"><div><span className="eyebrow">Ce qu’on a sorti de l’eau</span><h2>Journal de pêche</h2></div><span className="section-count">{catches.length} PRISE{catches.length === 1 ? '' : 'S'}</span></div>
+              {catches.length > 0 && (() => {
+                const weighed = catches.filter((item) => item.weight_kg !== null);
+                const totalKg = weighed.reduce((sum, item) => sum + Number(item.weight_kg), 0);
+                const biggest = weighed.reduce<FishCatch | null>((best, item) => (!best || Number(item.weight_kg) > Number(best.weight_kg) ? item : best), null);
+                const bySpecies = new Map<string, number>();
+                catches.forEach((item) => bySpecies.set(item.species, (bySpecies.get(item.species) ?? 0) + 1));
+                return (
+                  <div className="catch-stats">
+                    <div><span>POIDS TOTAL</span><strong>{totalKg.toFixed(1)} kg</strong></div>
+                    <div><span>PLUS GROSSE PRISE</span><strong>{biggest ? `${Number(biggest.weight_kg).toFixed(1)} kg` : '—'}</strong><small>{biggest?.species}</small></div>
+                    <div><span>PAR ESPÈCE</span><small>{[...bySpecies].sort((a, b) => b[1] - a[1]).map(([name, count]) => `${name} : ${count}`).join(' · ')}</small></div>
+                  </div>
+                );
+              })()}
+              {catches.length === 0 ? <EmptyState title="Aucune prise pour l’instant." copy="Ajoutez chaque poisson pêché : espèce, poids et endroit." /> : (
+                <div className="gear-list">
+                  {catches.map((item) => (
+                    <article className="gear-row" key={item.id}>
+                      <span className="catch-weight">{item.weight_kg === null ? '?' : `${Number(item.weight_kg).toFixed(1)}`}<small>{item.weight_kg === null ? 'poids inconnu' : 'kg'}</small></span>
+                      <span className="gear-name">{item.species}{item.released ? ' · remis à l’eau' : ''}<small>{[item.location, item.caught_by_couple_id ? coupleNames.get(item.caught_by_couple_id) : '', new Date(item.created_at).toLocaleString('fr-CA', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })].filter(Boolean).join(' · ')}</small></span>
+                      <button className="claim-button" onClick={() => void deleteCatch(item)} disabled={saving} aria-label={`Retirer la prise ${item.species}`}>Retirer</button>
+                    </article>
+                  ))}
+                </div>
+              )}
+              <details className="prep-notes">
+                <summary>Notes de préparation (espèces visées, permis, matériel)</summary>
+                <InfoLines items={[
+                  ['Espèces visées', fishingNotes?.target_species], ['Rappel pour les permis', fishingNotes?.license_reminders],
+                  ['Leurres et matériel', fishingNotes?.bait_tackle_notes], ['Notes locales', fishingNotes?.local_notes],
+                ]} />
+                <p className="side-note">Vérifiez les règles officielles, les permis, les saisons et les limites de prises en vigueur au Québec avant le départ.</p>
+              </details>
             </section>
           )}
 
@@ -963,7 +1032,19 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                   <div className="section-heading"><div><span className="eyebrow">Notre base au Réservoir Gouin</span><h2>Pourvoirie Rivière La Galette</h2></div></div>
                   <a className="map-link" href="https://pourvoirielagalette.ca/" target="_blank" rel="noreferrer">Site officiel de la pourvoirie ↗</a>
 
-                  <h3 className="info-subheading">Le bateau-maison</h3>
+                  <h3 className="info-subheading">Notre réservation : bateau-maison « Catherine »</h3>
+                  <InfoLines items={[
+                    ['Séjour', 'Du 2 au 6 août 2027 · 8 personnes · forfait journalier (début de saison)'],
+                    ['Hébergement', 'Bateau-maison avec 4 chambres fermées, capacité maximale de 8 personnes'],
+                    ['Inclus', 'Droit de pêche journalier au réservoir Gouin · génératrice 2500 watts · 1 chaloupe de 16′ en aluminium avec 1 moteur (15 ou 20 c.v.) par 2 adultes · 1 congélateur 110 V à l’extérieur · couverture Hélico Secours durant le séjour à la pourvoirie'],
+                    ['Arrivée / départ', 'Prise de possession à 13 h · retour au plus tard à 9 h'],
+                    ['Coût', 'Total de 5 578,16 $ taxes incluses (soumission nº 448 du 3 octobre 2026), soit environ 1 394,54 $ par couple. Rabais appliqués pour 1 chaloupe et 3 droits de pêche non utilisés.'],
+                    ['Dépôt', '50 % non remboursable et non transférable (reportable à une date ultérieure en cas d’interdiction d’accès au territoire). À payer dans les 2 semaines suivant la réception de la soumission, sans quoi la disponibilité ne peut être garantie. La soumission expire le 1er janvier 2027.'],
+                    ['Paiement', 'Argent, chèque ou virement Interac'],
+                    ['Attention', 'Essence à acheter à la pourvoirie · literie, oreillers, papier hygiénique et linge à vaisselle non fournis · eau non potable (prévoir des réserves) · vers et sangsues en vente à la pourvoirie · tous les bris aux équipements sont aux frais des clients'],
+                  ]} />
+
+                  <h3 className="info-subheading">Le bateau-maison (forfaits en général)</h3>
                   <div className="pourvoirie-columns">
                     <div>
                       <strong className="list-title list-yes">Tous les forfaits bateaux-maisons incluent</strong>
@@ -979,10 +1060,8 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                     </div>
                   </div>
 
-                  <h3 className="info-subheading">Comment s’y rendre</h3>
+                  <h3 className="info-subheading">Comment s’y rendre (départ de Gatineau)</h3>
                   <InfoLines items={[
-                    ['De Montréal (530 km)', 'Autoroute 15 Nord, puis route 117 Nord jusqu’au Lac Saguay. 12 km après le lac, à droite vers Chute-St-Phillipe (route 311) et suivre les indications pour Mont-St-Michel, puis Parent. À Parent, à l’intersection (dépanneur), tout droit direction barrage Gouin jusqu’au km 53. Tourner à gauche au panneau de la Pourvoirie Rivière La Galette (3,5 km).'],
-                    ['De Québec par La Tuque (500 km)', 'Route 155 jusqu’à La Tuque, puis direction Wemotaci/Parent ou route 25 (177 km, Radio CB poste 10). À la fin de la route 25, direction barrage Gouin à droite via la route 13 (41 km). Au km 53, tourner à gauche vers la pourvoirie (3,5 km).'],
                     ['De Gatineau/Ottawa (420 km)', 'Route 309 Nord jusqu’à Mont-Laurier, tout droit sur la 309 Nord jusqu’à Mont-Saint-Michel, puis direction Parent. À Parent, à l’intersection (dépanneur), tout droit direction barrage Gouin jusqu’au km 53. Tourner à gauche au panneau de la pourvoirie (3,5 km).'],
                     ['Avertissement', 'Ne pas utiliser un GPS sur les routes gravelées au risque de vous perdre. Suivez les indications fournies par la pourvoirie.'],
                   ]} />
@@ -1049,7 +1128,21 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
           )}
 
           {tab === 'fishing' && (
-            <form className="side-card" onSubmit={(event) => { event.preventDefault(); void saveTripDetails('fishing_notes', fishingDraft, 'Notes de pêche mises à jour'); }}>
+            <>
+            <form className="side-card" onSubmit={(event) => void addCatch(event)}>
+              <span className="eyebrow">Une belle prise ?</span><h3>Ajouter une prise</h3>
+              <label>Espèce<select value={catchSpecies} onChange={(event) => setCatchSpecies(event.target.value)}>{[...fishSpecies, otherSpecies].map((name) => <option key={name} value={name}>{name}</option>)}</select></label>
+              <label>Poids (kg)<input type="number" inputMode="decimal" min="0.01" step="0.01" value={catchWeight} onChange={(event) => setCatchWeight(event.target.value)} placeholder="Ex. 2.5" disabled={catchUnknownWeight} required={!catchUnknownWeight} /></label>
+              <label className="species-option"><input type="checkbox" checked={catchUnknownWeight} onChange={(event) => setCatchUnknownWeight(event.target.checked)} />Poids inconnu (petit poisson)</label>
+              <label>Endroit<input value={catchLocation} onChange={(event) => setCatchLocation(event.target.value)} placeholder="Baie, île, point, profondeur…" list="catch-locations" /></label>
+              <datalist id="catch-locations">{[...new Set(catches.map((item) => item.location).filter(Boolean))].map((name) => <option key={name} value={name} />)}</datalist>
+              <label>Pêché par<select value={catchCouple} onChange={(event) => setCatchCouple(event.target.value)}><option value="">Non précisé</option>{[1, 2, 3, 4].map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
+              <label className="species-option"><input type="checkbox" checked={catchReleased} onChange={(event) => setCatchReleased(event.target.checked)} />Remis à l’eau</label>
+              <button className="button button-dark button-full" type="submit" disabled={saving}>Ajouter au journal <span>↗</span></button>
+            </form>
+            <details className="side-card profile-details">
+            <summary>Modifier les notes de préparation</summary>
+            <form onSubmit={(event) => { event.preventDefault(); void saveTripDetails('fishing_notes', fishingDraft, 'Notes de pêche mises à jour'); }}>
               <span className="eyebrow">Préparer la sortie</span><h3>Modifier les notes</h3>
               <fieldset className="species-picker">
                 <legend>Espèces visées</legend>
@@ -1076,6 +1169,8 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <button className="button button-dark button-full" type="submit" disabled={saving}>Enregistrer les notes <span>↗</span></button>
               <p className="side-note">Vérifiez les règles officielles, les permis et les limites en vigueur avant le départ.</p>
             </form>
+            </details>
+            </>
           )}
 
           {tab === 'safety' && (
