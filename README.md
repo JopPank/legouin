@@ -55,16 +55,14 @@ Remplacez chaque valeur `UUID-AUTH-...` par l’UUID réel du compte corresponda
 
 ## Déploiement sur `legouin.jopism.com`
 
-Le déploiement n’est pas effectué par le dépôt local. Il nécessite vos comptes GitHub, Supabase, Vercel et votre fournisseur DNS. Les noms de domaine, comptes et secrets ne sont pas accessibles depuis cet espace de travail.
+Le dépôt déploie le site statique avec GitHub Actions et GitHub Pages. Chaque poussée sur `main` déclenche le build et le déploiement. Le site utilise Supabase directement depuis le navigateur; seules l’URL Supabase et sa clé publique sont requises au build.
 
-1. Vérifiez le site localement (`npm run build`) puis créez un dépôt GitHub privé et poussez le projet.
-2. Importez ce dépôt dans Vercel en tant que projet Next.js.
-3. Ajoutez dans Vercel, pour l’environnement Production :
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Ajoutez `legouin.jopism.com` dans **Project Settings → Domains** sur Vercel et suivez les valeurs DNS exactes affichées pour ce projet.
-5. Chez le fournisseur DNS qui gère `jopism.com`, créez uniquement l’enregistrement pour l’hôte `legouin` indiqué par Vercel. Ne modifiez pas les serveurs de noms ni les enregistrements du domaine racine. Attendez que Vercel confirme DNS et HTTPS.
-6. Dans Supabase Auth **URL Configuration**, réglez le Site URL sur `https://legouin.jopism.com` et ajoutez l’URL de production aux URL de redirection autorisées.
+1. Dans les paramètres du dépôt GitHub, ajoutez les variables de dépôt `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` avec l’URL du projet Supabase et sa clé publique (`anon`/publishable). L’action échoue explicitement si l’une manque. N’ajoutez jamais une clé `service_role`.
+2. Dans **Settings → Pages**, choisissez **GitHub Actions** comme source de build et de déploiement.
+3. Lancez l’action **Deploy to GitHub Pages** depuis **Actions**, ou poussez un changement sur `main`. Vérifiez que le workflow réussit.
+4. Dans **Settings → Pages → Custom domain**, inscrivez `legouin.jopism.com` et enregistrez.
+5. Chez le fournisseur DNS de `jopism.com`, configurez l’hôte `legouin` en CNAME vers `joppank.github.io` (ou la cible précise indiquée par GitHub). Remplacez tout CNAME existant pour `legouin`; ne modifiez pas les serveurs de noms ni les enregistrements du domaine racine. Attendez que GitHub confirme DNS et HTTPS.
+6. Dans Supabase Auth **URL Configuration**, réglez le Site URL sur `https://legouin.jopism.com` et ajoutez cette URL aux URL de redirection autorisées.
 7. Avant de communiquer l’adresse au groupe, vérifiez la connexion des huit comptes, les politiques RLS avec un participant, la visibilité et la suppression des photos, le téléversement, les mises à jour en direct et l’affichage sur téléphone.
 
 ### Contrôles de confidentialité

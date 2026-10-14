@@ -61,8 +61,8 @@ function ConfigNotice() {
         <span className="eyebrow">Une petite étape de configuration</span>
         <h1>Connecter votre espace de voyage</h1>
         <p>
-          Ajoutez l’URL de votre projet Supabase et sa clé publique dans <code>.env.local</code>,
-          puis redémarrez l’application. Les valeurs d’exemple se trouvent dans <code>.env.example</code>.
+          Pour le développement local, ajoutez l’URL de votre projet Supabase et sa clé publique dans <code>.env.local</code>.
+          Pour le site publié, définissez ces valeurs dans les variables du dépôt GitHub, puis relancez le déploiement.
         </p>
         <p className="muted">
           Gardez les clés de rôle de service confidentielles. Ce site utilise uniquement la clé publique prévue pour le navigateur.
