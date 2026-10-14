@@ -56,6 +56,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .button-outline:hover:not(:disabled) { background: #edf0e9; }
 .button-full { width: 100%; }
 .form-error { margin: 0; color: #a83e32; font-size: 12px; line-height: 1.5; }
+.form-success { margin: 0; color: #2c694d; font-size: 12px; line-height: 1.5; }
+.text-button { border: 0; padding: 0; color: var(--forest); background: transparent; font-size: 11px; text-align: left; text-decoration: underline; cursor: pointer; }
 .auth-footnote { margin-top: 25px; color: #899087; font-size: 10px; line-height: 1.6; }
 
 .dashboard { width: min(100%, 1440px); min-height: 100vh; margin: auto; padding: 0 6.4%; background: var(--paper); }

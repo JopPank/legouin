@@ -78,6 +78,8 @@ function AuthScreen({ onSignedIn }: { onSignedIn: (session: Session) => void }) 
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [resetMode, setResetMode] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   async function signIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -102,6 +104,28 @@ function AuthScreen({ onSignedIn }: { onSignedIn: (session: Session) => void }) 
     }
   }
 
+  async function requestPasswordReset(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase) return;
+    setBusy(true);
+    setError('');
+    setResetSent(false);
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/`,
+      });
+      if (resetError) {
+        setError(resetError.message);
+        return;
+      }
+      setResetSent(true);
+    } catch (resetError) {
+      setError(getErrorMessage(resetError));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <main className="auth-layout">
       <div className="auth-photo">
@@ -116,9 +140,13 @@ function AuthScreen({ onSignedIn }: { onSignedIn: (session: Session) => void }) 
         <div className="auth-content">
           <Brand />
           <span className="eyebrow">Votre groupe, votre escapade</span>
-          <h2>Bon retour!</h2>
-          <p className="muted">Connectez-vous pour voir ce que chacun apporte, prépare et paie.</p>
-          <form className="stack-form" onSubmit={signIn}>
+          <h2>{resetMode ? 'Mot de passe oublié?' : 'Bon retour!'}</h2>
+          <p className="muted">
+            {resetMode
+              ? 'Nous vous enverrons un lien pour choisir un nouveau mot de passe.'
+              : 'Connectez-vous pour voir ce que chacun apporte, prépare et paie.'}
+          </p>
+          <form className="stack-form" onSubmit={resetMode ? requestPasswordReset : signIn}>
             <label>
               Adresse courriel
               <input
@@ -130,23 +158,114 @@ function AuthScreen({ onSignedIn }: { onSignedIn: (session: Session) => void }) 
                 required
               />
             </label>
+            {!resetMode && (
+              <label>
+                Mot de passe
+                <input
+                  autoComplete="current-password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Votre mot de passe"
+                  required
+                />
+              </label>
+            )}
+            {error && <p className="form-error" role="alert">{error}</p>}
+            {resetSent && <p className="form-success" role="status">Si cette adresse correspond à un compte, un lien de réinitialisation vous sera envoyé.</p>}
+            <button className="button button-dark button-full" type="submit" disabled={busy}>
+              {busy
+                ? (resetMode ? 'Envoi…' : 'Connexion…')
+                : (resetMode ? 'Envoyer le lien' : 'Se connecter')} <span aria-hidden="true">↗</span>
+            </button>
+          </form>
+          {resetMode ? (
+            <button className="text-button auth-footnote" type="button" onClick={() => { setResetMode(false); setError(''); setResetSent(false); }}>
+              Retour à la connexion
+            </button>
+          ) : (
+            <>
+              <button className="text-button auth-footnote" type="button" onClick={() => { setResetMode(true); setError(''); }}>
+                Mot de passe oublié?
+              </button>
+              <p className="auth-footnote">Réservé aux personnes invitées. Demandez un compte à la personne qui organise le voyage.</p>
+            </>
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function PasswordRecoveryScreen({ onComplete }: { onComplete: (session: Session | null) => void }) {
+  const supabase = getSupabaseClient();
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  async function updatePassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!supabase) return;
+    if (password.length < 6) {
+      setError('Choisissez un mot de passe d’au moins 6 caractères.');
+      return;
+    }
+    if (password !== confirmation) {
+      setError('Les mots de passe ne correspondent pas.');
+      return;
+    }
+    setBusy(true);
+    setError('');
+    try {
+      const { error: updateError } = await supabase.auth.updateUser({ password });
+      if (updateError) {
+        setError(updateError.message);
+        return;
+      }
+      const { data, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError) {
+        setError(`Mot de passe modifié, mais impossible de restaurer la session : ${sessionError.message}`);
+        return;
+      }
+      onComplete(data.session);
+    } catch (updateError) {
+      setError(getErrorMessage(updateError));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <main className="auth-layout">
+      <div className="auth-photo">
+        <div className="photo-caption">
+          <span className="eyebrow">Les bons moments se partagent</span>
+          <h1>Au grand air,<br />ensemble.</h1>
+          <p>Tous les détails d’un voyage mémorable.</p>
+        </div>
+        <span className="photo-credit">LE GOUIN · LE VOYAGE ENTRE AMIS</span>
+      </div>
+      <section className="auth-panel">
+        <div className="auth-content">
+          <Brand />
+          <span className="eyebrow">Sécurisez votre compte</span>
+          <h2>Choisir un mot de passe</h2>
+          <p className="muted">Créez un mot de passe pour accéder à l’organisation du voyage.</p>
+          <form className="stack-form" onSubmit={updatePassword}>
             <label>
-              Mot de passe
-              <input
-                autoComplete="current-password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Votre mot de passe"
-                required
-              />
+              Nouveau mot de passe
+              <input autoComplete="new-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required minLength={6} />
+            </label>
+            <label>
+              Confirmer le mot de passe
+              <input autoComplete="new-password" type="password" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} required minLength={6} />
             </label>
             {error && <p className="form-error" role="alert">{error}</p>}
             <button className="button button-dark button-full" type="submit" disabled={busy}>
-              {busy ? 'Connexion…' : 'Se connecter'} <span aria-hidden="true">↗</span>
+              {busy ? 'Enregistrement…' : 'Enregistrer le mot de passe'} <span aria-hidden="true">↗</span>
             </button>
           </form>
-          <p className="auth-footnote">Réservé aux personnes invitées. Demandez un compte à la personne qui organise le voyage.</p>
         </div>
       </section>
     </main>
@@ -959,6 +1078,7 @@ export default function Home() {
   const [session, setSession] = useState<Session | null>(null);
   const [checkingSession, setCheckingSession] = useState(true);
   const [authError, setAuthError] = useState('');
+  const [recoveryMode, setRecoveryMode] = useState(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -976,8 +1096,9 @@ export default function Home() {
       setAuthError(`Impossible de restaurer votre session : ${getErrorMessage(error)}`);
       setCheckingSession(false);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
+      if (event === 'PASSWORD_RECOVERY') setRecoveryMode(true);
     });
     return () => {
       active = false;
@@ -994,6 +1115,10 @@ export default function Home() {
 
   if (!supabase) return <ConfigNotice />;
   if (checkingSession) return <main className="center-stage"><div className="loading-mark"><span className="brand-mark">LG</span><p>Chargement de votre voyage…</p></div></main>;
+  if (recoveryMode) return <PasswordRecoveryScreen onComplete={(nextSession) => {
+    setRecoveryMode(false);
+    setSession(nextSession);
+  }} />;
   if (session) {
     return (
       <>
