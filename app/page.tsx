@@ -31,6 +31,12 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Une erreur inattendue est survenue.';
 }
 
+function randomId(): string {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
 function money(value: number): string {
   return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD' }).format(value);
 }
@@ -625,7 +631,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
         }
         if (file.size > 10 * 1024 * 1024) throw new Error('Chaque photo doit faire 10 Mo ou moins.');
         const safeName = file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]/g, '-');
-        const path = `${user.id}/${crypto.randomUUID()}-${safeName}`;
+        const path = `${user.id}/${randomId()}-${safeName}`;
         const { error: uploadError } = await supabase.storage.from(tripPhotoBucket).upload(path, file, {
           contentType: file.type,
           upsert: false,
