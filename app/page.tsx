@@ -968,7 +968,6 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <InfoLines items={[
                 ['Départ', logistics?.departure_details], ['Retour', logistics?.return_details],
                 ['Lieu de rencontre', logistics?.meeting_place], ['Transport et covoiturage', logistics?.transport_plan],
-                ['Détails de la location', logistics?.rental_details], ['Notes de réservation', logistics?.booking_notes],
               ]} />
             </section>
           )}
@@ -1250,8 +1249,6 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <label>Date et heure du retour<input value={logisticsDraft.return_details} onChange={(event) => setLogisticsDraft({ ...logisticsDraft, return_details: event.target.value })} placeholder="6 août · heure à confirmer" /></label>
               <label>Lieu de rencontre<input value={logisticsDraft.meeting_place} onChange={(event) => setLogisticsDraft({ ...logisticsDraft, meeting_place: event.target.value })} placeholder="Adresse ou point de repère" /></label>
               <label>Transport et covoiturage<textarea rows={2} value={logisticsDraft.transport_plan} onChange={(event) => setLogisticsDraft({ ...logisticsDraft, transport_plan: event.target.value })} placeholder="Conducteurs, places, points de rencontre" /></label>
-              <label>Détails de la location<textarea rows={2} value={logisticsDraft.rental_details} onChange={(event) => setLogisticsDraft({ ...logisticsDraft, rental_details: event.target.value })} placeholder="Consignes d’arrivée, éléments inclus" /></label>
-              <label>Notes de réservation<input value={logisticsDraft.booking_notes} onChange={(event) => setLogisticsDraft({ ...logisticsDraft, booking_notes: event.target.value })} placeholder="Référence de confirmation" /></label>
               <button className="button button-dark button-full" type="submit" disabled={saving}>Enregistrer la logistique <span>↗</span></button>
             </form>
           )}
