@@ -24,7 +24,7 @@ The first release is scoped to one trip and a known group of eight participants.
 | Styling | Tailwind CSS | Responsive layout and visual styling |
 | Authentication and data | Supabase Auth and PostgreSQL | Sign-in, relational trip data, and access control |
 | Live updates | Supabase Realtime | Notify clients when shared records change |
-| Hosting | Vercel or Netlify | Build and deploy the web application |
+| Hosting | GitHub Pages with GitHub Actions | Build and deploy the static Next.js export |
 
 The Supabase publishable/anonymous key may be used by the browser only when Row Level Security (RLS) is enabled and policies restrict access to trip participants. Never expose a Supabase service-role key in client code or a `NEXT_PUBLIC_` environment variable.
 
@@ -162,6 +162,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 ### Deployment and operating notes
 
-Vercel and Netlify can both host a Next.js app; confirm the selected provider's current Next.js support and deployment configuration before launch. Configure the two public Supabase variables in the hosting provider's environment settings. Keep database schema changes in versioned migrations so local, preview, and production environments stay consistent.
+GitHub Actions builds and deploys the static Next.js export to GitHub Pages on pushes to `main`. Configure the public Supabase URL and key as repository variables, and confirm the custom domain's DNS and HTTPS status in GitHub Pages before launch. Keep database schema changes in versioned migrations so local, preview, and production environments stay consistent.
 
 The equal expense split is recorded as the initial product rule; this schema does not calculate reimbursements or settle balances. A later expense-settlement feature should define how to handle uneven participation, reimbursements, and rounding before implementation.
