@@ -26,6 +26,9 @@ const mealTypeLabels: Record<MealType, string> = {
 };
 const expenseCategories = ['Essence', 'Épicerie', 'Boissons', 'Matériel de pêche', 'Autres frais', 'Bois de chauffage'];
 const tripPhotoBucket = 'trip-photos';
+const everyoneId = 5;
+const assigneeIds = [1, 2, 3, 4, everyoneId];
+const fishSpecies = ['Doré jaune', 'Grand brochet', 'Grand corégone', 'Touladi', 'Omble de fontaine', 'Perchaude', 'Lotte'];
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Une erreur inattendue est survenue.';
@@ -423,7 +426,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   }, [toast]);
 
   const profileById = useMemo(() => new Map(profiles.map((item) => [item.id, item])), [profiles]);
-  const coupleNames = useMemo(() => new Map([[1, 'Jop & Nat'], [2, 'Andréa & Alain'], [3, 'Ben & Pas'], [4, 'Jo & Chris']]), []);
+  const coupleNames = useMemo(() => new Map([[1, 'Jop & Nat'], [2, 'Andréa & Alain'], [3, 'Ben & Pas'], [4, 'Jo & Chris'], [everyoneId, 'Tous']]), []);
   const totalSpent = expenses.reduce((total, expense) => total + Number(expense.amount), 0);
   const packedCount = gear.filter((item) => item.is_packed).length;
   const coupleTotals = [1, 2, 3, 4].map((coupleId) => {
@@ -769,20 +772,27 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                 <span className="section-count">{meals.length} PLANIFIÉ{meals.length === 1 ? '' : 'S'}</span>
               </div>
               <p className="side-note">Du lundi 2 au vendredi 6 août 2027. Les menus restent à déterminer.</p>
-              <div className="meal-list">
-                {Array.from({ length: 5 }, (_, index) => index + 1).flatMap((day) =>
-                  (['Breakfast', 'Lunch', 'Dinner'] as const).map((type) => {
-                    const meal = meals.find((item) => item.day_number === day && item.meal_type === type);
-                    const date = new Date(Date.UTC(2027, 7, day + 1));
-                    return (
-                      <article className="meal-card" key={`${day}-${type}`}>
-                        <div className="meal-day"><span>{new Intl.DateTimeFormat('fr-CA', { weekday: 'short', timeZone: 'UTC' }).format(date)}</span><strong>{String(day).padStart(2, '0')}</strong></div>
-                        <div className="meal-content"><span className="meal-type">{mealTypeLabels[type]}</span><h3>{meal?.menu_details || 'Menu à déterminer'}</h3></div>
-                        <span className={`couple-tag couple-${meal?.assigned_couple_id ?? 1}`}>{meal?.assigned_couple_id ? coupleNames.get(meal.assigned_couple_id) : 'À déterminer'}</span>
-                      </article>
-                    );
-                  }),
-                )}
+              <div className="meal-days">
+                {Array.from({ length: 5 }, (_, index) => index + 1).map((day) => {
+                  const date = new Date(Date.UTC(2027, 7, day + 1));
+                  const dayLabel = new Intl.DateTimeFormat('fr-CA', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(date);
+                  return (
+                    <div className="meal-day-group" key={day}>
+                      <h3 className="meal-day-heading"><span>Jour {day}</span>{dayLabel}</h3>
+                      <div className="meal-list">
+                        {(['Breakfast', 'Lunch', 'Dinner'] as const).map((type) => {
+                          const meal = meals.find((item) => item.day_number === day && item.meal_type === type);
+                          return (
+                            <article className="meal-card" key={`${day}-${type}`}>
+                              <div className="meal-content"><span className="meal-type">{mealTypeLabels[type]}</span><h3>{meal?.menu_details || 'Menu à déterminer'}</h3></div>
+                              <span className={`couple-tag couple-${meal?.assigned_couple_id ?? 1}`}>{meal?.assigned_couple_id ? coupleNames.get(meal.assigned_couple_id) : 'À déterminer'}</span>
+                            </article>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </section>
           )}
@@ -804,10 +814,10 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
                           return (
                             <article className={`gear-row ${item.is_packed ? 'is-packed' : ''}`} key={item.id}>
                               <button className={`check-button ${item.is_packed ? 'checked' : ''}`} onClick={() => void updateGear(item, 'packed')} aria-label={item.is_packed ? `Marquer ${item.item_name} comme non emballé` : `Marquer ${item.item_name} comme prêt`} disabled={saving}><span>✓</span></button>
-                              <span className="gear-name">{item.item_name}<small>{item.assigned_couple_id ? `Apporté par ${coupleNames.get(item.assigned_couple_id)}` : claimant ? `Apporté par ${claimant.full_name}` : 'Couple responsable à déterminer'}</small></span>
+                              <span className="gear-name">{item.item_name}<small>{item.assigned_couple_id === everyoneId ? 'Chacun doit l’apporter' : item.assigned_couple_id ? `Apporté par ${coupleNames.get(item.assigned_couple_id)}` : claimant ? `Apporté par ${claimant.full_name}` : 'Couple responsable à déterminer'}</small></span>
                               <select className="gear-assignee" aria-label={`Couple responsable de ${item.item_name}`} value={item.assigned_couple_id ?? ''} onChange={(event) => void assignGear(item, event.target.value)} disabled={saving}>
                                 <option value="">À déterminer</option>
-                                {[1, 2, 3, 4].map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}
+                                {assigneeIds.map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}
                               </select>
                               <button
                                 className={`claim-button ${item.claimed_by_user === user.id ? 'claimed-by-me' : ''}`}
@@ -937,9 +947,10 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               {tab === 'map' && (
                 <section className="section-block">
                   <div className="section-heading"><div><span className="eyebrow">Repérez votre coin de lac</span><h2>Réservoir Gouin</h2></div><span className="section-count">QUÉBEC, CANADA</span></div>
-                  <iframe className="trip-map" title="Carte OpenStreetMap centrée sur le réservoir Gouin" src="https://www.openstreetmap.org/export/embed.html?bbox=-75.2%2C48.1%2C-73.8%2C49.0&layer=mapnik&marker=48.55%2C-74.5" loading="lazy" referrerPolicy="no-referrer" />
-                  <p className="side-note">Le repère est approximatif et ne sert pas à la navigation. Confirmez l’emplacement du bateau-maison, l’itinéraire et la mise à l’eau auprès du responsable de la location.</p>
-                  <a className="map-link" href="https://www.openstreetmap.org/?mlat=48.55&mlon=-74.5#map=9/48.55/-74.5" target="_blank" rel="noreferrer">Ouvrir une carte plus détaillée ↗</a>
+                  <iframe className="trip-map" title="Carte OpenStreetMap du point de départ, Pourvoirie Rivière La Galette" src="https://www.openstreetmap.org/export/embed.html?bbox=-74.50%2C48.25%2C-74.42%2C48.30&layer=mapnik&marker=48.27471%2C-74.461628" loading="lazy" referrerPolicy="no-referrer" />
+                  <p className="side-note">Point de départ : Pourvoirie Rivière La Galette (48°16′29″ N, 74°27′42″ O). Ne sert pas à la navigation; confirmez l’itinéraire et la mise à l’eau auprès du responsable de la location.</p>
+                  <a className="map-link" href="https://www.openstreetmap.org/?mlat=48.27471&mlon=-74.461628#map=14/48.27471/-74.461628" target="_blank" rel="noreferrer">Ouvrir une carte plus détaillée ↗</a>
+                  <a className="map-link" href="https://pourvoirielagalette.ca/" target="_blank" rel="noreferrer">Site de la Pourvoirie Rivière La Galette ↗</a>
                 </section>
               )}
 
@@ -974,7 +985,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <span className="eyebrow">À table!</span><h3>Ajouter au menu</h3>
               <label>Jour du voyage<input type="number" min="1" max="5" step="1" value={mealDay} onChange={(event) => setMealDay(event.target.value)} required /></label>
               <label>Repas<select value={mealType} onChange={(event) => setMealType(event.target.value as MealType)}>{(['Breakfast', 'Lunch', 'Dinner'] as const).map((type) => <option key={type} value={type}>{mealTypeLabels[type]}</option>)}</select></label>
-              <label>Couple responsable<select value={mealCouple} onChange={(event) => setMealCouple(event.target.value)}><option value="">À déterminer</option>{[1, 2, 3, 4].map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
+              <label>Couple responsable<select value={mealCouple} onChange={(event) => setMealCouple(event.target.value)}><option value="">À déterminer</option>{assigneeIds.map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
               <label>Qu’y a-t-il au menu?<textarea value={mealDetails} onChange={(event) => setMealDetails(event.target.value)} placeholder="Tacos au bord du lac…" rows={3} /></label>
               <button className="button button-dark button-full" type="submit" disabled={saving}>Enregistrer le repas <span>↗</span></button>
               <p className="side-note">Un repas par jour et par type. Modifier un créneau existant met à jour le menu pour tout le monde.</p>
@@ -986,7 +997,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <span className="eyebrow">Ne rien oublier</span><h3>Ajouter un article commun</h3>
               <label>Nom de l’article<input value={gearName} onChange={(event) => setGearName(event.target.value)} placeholder="Réchaud de camping" required /></label>
               <label>Catégorie<select value={gearCategory} onChange={(event) => setGearCategory(event.target.value)}>{gearCategories.map((category) => <option key={category} value={category}>{gearCategoryLabels[category]}</option>)}</select></label>
-              <label>Couple responsable<select value={packingCouple} onChange={(event) => setPackingCouple(event.target.value)}><option value="">À déterminer</option>{[1, 2, 3, 4].map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
+              <label>Couple responsable<select value={packingCouple} onChange={(event) => setPackingCouple(event.target.value)}><option value="">À déterminer</option>{assigneeIds.map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
               <button className="button button-dark button-full" type="submit" disabled={saving}>Ajouter à la liste <span>↗</span></button>
               <p className="side-note">Attribuez l’article quand vous pouvez l’apporter. Cochez-le une fois dans la voiture.</p>
             </form>
@@ -997,7 +1008,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
               <span className="eyebrow">Planifier les repas, puis magasiner</span><h3>Ajouter à l’épicerie</h3>
               <label>Aliment ou fourniture<input value={groceryName} onChange={(event) => setGroceryName(event.target.value)} placeholder="Café, œufs, eau potable" required /></label>
               <label>Quantité ou détails<input value={groceryQuantity} onChange={(event) => setGroceryQuantity(event.target.value)} placeholder="Facultatif" /></label>
-              <label>Couple responsable des achats<select value={groceryCouple} onChange={(event) => setGroceryCouple(event.target.value)}><option value="">À déterminer</option>{[1, 2, 3, 4].map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
+              <label>Couple responsable des achats<select value={groceryCouple} onChange={(event) => setGroceryCouple(event.target.value)}><option value="">À déterminer</option>{assigneeIds.map((id) => <option key={id} value={id}>{coupleNames.get(id)}</option>)}</select></label>
               <button className="button button-dark button-full" type="submit" disabled={saving}>Ajouter à la liste <span>↗</span></button>
             </form>
           )}
@@ -1005,7 +1016,25 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
           {tab === 'fishing' && (
             <form className="side-card" onSubmit={(event) => { event.preventDefault(); void saveTripDetails('fishing_notes', fishingDraft, 'Notes de pêche mises à jour'); }}>
               <span className="eyebrow">Préparer la sortie</span><h3>Modifier les notes</h3>
-              <label>Espèces visées<input value={fishingDraft.target_species} onChange={(event) => setFishingDraft({ ...fishingDraft, target_species: event.target.value })} /></label>
+              <fieldset className="species-picker">
+                <legend>Espèces visées</legend>
+                {fishSpecies.map((species) => {
+                  const selected = fishingDraft.target_species.split(',').map((name) => name.trim()).filter(Boolean);
+                  return (
+                    <label className="species-option" key={species}>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(species)}
+                        onChange={(event) => setFishingDraft({
+                          ...fishingDraft,
+                          target_species: (event.target.checked ? [...selected, species] : selected.filter((name) => name !== species)).join(', '),
+                        })}
+                      />
+                      {species}
+                    </label>
+                  );
+                })}
+              </fieldset>
               <label>Rappels pour les permis<textarea rows={2} value={fishingDraft.license_reminders} onChange={(event) => setFishingDraft({ ...fishingDraft, license_reminders: event.target.value })} /></label>
               <label>Leurres et matériel<textarea rows={2} value={fishingDraft.bait_tackle_notes} onChange={(event) => setFishingDraft({ ...fishingDraft, bait_tackle_notes: event.target.value })} /></label>
               <label>Idées et notes locales<textarea rows={3} value={fishingDraft.local_notes} onChange={(event) => setFishingDraft({ ...fishingDraft, local_notes: event.target.value })} /></label>
@@ -1046,12 +1075,15 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
             </div>
           )}
 
-          <form className="side-card profile-card" onSubmit={saveName}>
-            <span className="eyebrow">Vos renseignements</span><h3>Profil du participant</h3>
-            <label>Votre nom<input value={nameDraft} onChange={(event) => setNameDraft(event.target.value)} required /></label>
-            <div className="profile-couple"><span>VOTRE COUPLE</span><strong>{coupleNames.get(profile.couple_id) ?? `Couple ${profile.couple_id}`}</strong></div>
-            <button className="button button-outline button-full" type="submit" disabled={saving}>Enregistrer le profil</button>
-          </form>
+          <details className="profile-details">
+            <summary>Mon profil</summary>
+            <form className="side-card profile-card" onSubmit={saveName}>
+              <span className="eyebrow">Vos renseignements</span><h3>Profil du participant</h3>
+              <label>Votre nom<input value={nameDraft} onChange={(event) => setNameDraft(event.target.value)} required /></label>
+              <div className="profile-couple"><span>VOTRE COUPLE</span><strong>{coupleNames.get(profile.couple_id) ?? `Couple ${profile.couple_id}`}</strong></div>
+              <button className="button button-outline button-full" type="submit" disabled={saving}>Enregistrer le profil</button>
+            </form>
+          </details>
         </aside>
       </section>
 

@@ -111,6 +111,16 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .couple-2 { border-color: #eadacb; color: #855b3f; background: #f5ece3; }
 .couple-3 { border-color: #ded9e8; color: #66597c; background: #f0edf5; }
 .couple-4 { border-color: #d8e4e7; color: #426873; background: #eaf2f2; }
+.couple-5 { border-color: #e6dcb8; color: #6f5d1f; background: #f7f1d9; }
+.meal-days { display: grid; gap: 34px; }
+.meal-day-heading { display: flex; align-items: baseline; gap: 12px; margin: 0 0 10px; border-left: 3px solid var(--forest); padding-left: 12px; font: 600 21px/1.2 var(--serif); text-transform: capitalize; }
+.meal-day-heading span { color: #998269; font: 700 9px/1 var(--sans, inherit); letter-spacing: .14em; text-transform: uppercase; }
+.species-picker { display: grid; gap: 8px; margin: 0; border: 1px solid #dfded5; padding: 12px; }
+.species-picker legend { padding: 0 6px; color: #455049; font-size: 10px; font-weight: 600; }
+.side-card .species-option { display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.side-card .species-option input { width: auto; min-height: 0; accent-color: var(--forest); }
+.profile-details > summary { cursor: pointer; padding: 6px 2px; color: #858b83; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.profile-details[open] > summary { margin-bottom: 10px; }
 .empty-state { display: grid; justify-items: center; border: 1px dashed #d9d8ce; padding: 50px 20px; text-align: center; }
 .empty-spark { color: #a77e5e; font-size: 20px; }
 .empty-state h3 { margin: 12px 0 5px; font: 500 20px var(--serif); }
@@ -182,7 +192,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .upload-label { display: inline-flex !important; width: fit-content; min-height: 40px; align-items: center; border: 1px solid #b8c9bc; padding: 0 14px; color: var(--forest) !important; background: white; font-size: 10px !important; font-weight: 700 !important; cursor: pointer; }
 .upload-label input { width: min(230px, 55vw); min-height: 30px; border: 0; padding: 0; font-size: 10px !important; cursor: pointer; }
 .trip-map { width: 100%; height: 500px; display: block; border: 1px solid var(--line); background: var(--sage); }
-.map-link { display: inline-block; margin-top: 12px; color: var(--forest); font-size: 10px; font-weight: 700; }
+.map-link { display: inline-block; margin-top: 12px; margin-right: 18px; color: var(--forest); font-size: 10px; font-weight: 700; }
 .footer { min-height: 80px; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); color: #8b9188; font-size: 9px; }
 .footer .brand { transform: scale(.86); transform-origin: left center; }
 .footer > span:last-child { font-size: 8px; font-weight: 700; letter-spacing: .12em; }
