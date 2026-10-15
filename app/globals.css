@@ -75,11 +75,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .hero h1 em { color: #e4ba91; font-weight: 500; }
 .hero-copy > p { margin: 0; color: #d0dcd4; font-size: 16px; }
 .live-dot { width: 6px; height: 6px; display: inline-block; border-radius: 50%; background: #b9d39d; vertical-align: 1px; }
-.hero-stats { width: 116px; height: 116px; display: grid; flex: 0 0 auto; place-items: center; margin-right: 28px; border: 1px solid #ffffff66; border-radius: 4px; background: #10251f66; text-align: center; }
+.hero-stats { width: 116px; height: 116px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffff66; border-radius: 4px; background: #10251f66; text-align: center; }
 .hero-stats > div { display: grid; gap: 4px; }
 .stat-number { font: 500 46px/1 var(--serif); white-space: nowrap; }
 .stat-label { color: #dce5df; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
-.hero-logo { position: absolute; top: 22px; right: 26px; z-index: 2; display: block; line-height: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 18px #0000004d; }
+.hero-logo { position: absolute; top: 22px; right: 45px; z-index: 2; display: block; line-height: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 18px #0000004d; }
 .hero-logo img { width: 210px; height: auto; display: block; }
 .info-subheading { margin: 30px 0 12px; font: 600 21px/1.2 var(--serif); color: var(--forest); }
 .pourvoirie-columns { display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; }
@@ -241,7 +241,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .auth-panel { padding: 38px; }
   .dashboard { padding: 0 4%; }
   .hero { min-height: 280px; padding: 32px; }
-  .hero-stats { width: 108px; height: 108px; margin-right: 45px; }
+  .hero-stats { width: 108px; height: 108px; }
+  .hero-logo { right: 32px; }
   .content-grid { grid-template-columns: minmax(0, 1.4fr) minmax(240px, .85fr); gap: 26px; }
   .side-card { padding: 18px; }
 }
@@ -260,7 +261,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .hero h1 { font-size: 49px; }
   .hero-copy { max-width: 100%; }
   .hero-copy > p { font-size: 14px; }
-  .hero-stats { width: 88px; height: 88px; align-self: flex-end; margin-right: 26px; }
+  .hero-stats { width: 88px; height: 88px; align-self: flex-end; }
   .stat-number { font-size: 36px; }
   .stat-label { font-size: 8px; line-height: 1.4; }
   .sun-disc { top: -150px; right: -145px; }
