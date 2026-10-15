@@ -73,14 +73,14 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .hero-copy { max-width: calc(100% - 145px); }
 .hero h1 { margin: 16px 0 10px; font: 500 clamp(40px, 5vw, 62px)/.99 var(--serif); letter-spacing: -.035em; }
 .hero h1 em { color: #e4ba91; font-weight: 500; }
-.hero-copy > p { margin: 0; color: #d0dcd4; font-size: 12px; }
+.hero-copy > p { margin: 0; color: #d0dcd4; font-size: 16px; }
 .live-dot { width: 6px; height: 6px; display: inline-block; border-radius: 50%; background: #b9d39d; vertical-align: 1px; }
-.hero-stats { width: 108px; height: 100px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffff66; border-radius: 4px; background: #10251f66; text-align: center; }
+.hero-stats { width: 116px; height: 116px; display: grid; flex: 0 0 auto; place-items: center; margin-right: 28px; border: 1px solid #ffffff66; border-radius: 4px; background: #10251f66; text-align: center; }
 .hero-stats > div { display: grid; gap: 4px; }
-.stat-number { font: 500 42px/1 var(--serif); white-space: nowrap; }
+.stat-number { font: 500 46px/1 var(--serif); white-space: nowrap; }
 .stat-label { color: #dce5df; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
 .hero-logo { position: absolute; top: 22px; right: 26px; z-index: 2; display: block; line-height: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 18px #0000004d; }
-.hero-logo img { width: 190px; height: auto; display: block; }
+.hero-logo img { width: 210px; height: auto; display: block; }
 .info-subheading { margin: 30px 0 12px; font: 600 21px/1.2 var(--serif); color: var(--forest); }
 .pourvoirie-columns { display: grid; grid-template-columns: 1.4fr 1fr; gap: 30px; }
 .list-title { display: block; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
@@ -241,7 +241,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .auth-panel { padding: 38px; }
   .dashboard { padding: 0 4%; }
   .hero { min-height: 280px; padding: 32px; }
-  .hero-stats { width: 100px; height: 94px; }
+  .hero-stats { width: 108px; height: 108px; margin-right: 45px; }
   .content-grid { grid-template-columns: minmax(0, 1.4fr) minmax(240px, .85fr); gap: 26px; }
   .side-card { padding: 18px; }
 }
@@ -259,11 +259,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .hero { min-height: 340px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; margin-top: 15px; padding: 28px 22px; }
   .hero h1 { font-size: 49px; }
   .hero-copy { max-width: 100%; }
-  .hero-stats { width: 88px; height: 82px; align-self: flex-end; }
-  .stat-number { font-size: 35px; }
+  .hero-copy > p { font-size: 14px; }
+  .hero-stats { width: 88px; height: 88px; align-self: flex-end; margin-right: 26px; }
+  .stat-number { font-size: 36px; }
   .stat-label { font-size: 8px; line-height: 1.4; }
   .sun-disc { top: -150px; right: -145px; }
   .pourvoirie-columns { grid-template-columns: 1fr; }
+  .hero-logo { right: 22px; }
   .hero-logo img { width: 140px; }
   .tabbar { justify-content: flex-start; gap: 18px; }
   .tab { min-height: 57px; gap: 6px; font-size: 11px; }
