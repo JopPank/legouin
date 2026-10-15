@@ -366,6 +366,7 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const [safetyInfo, setSafetyInfo] = useState<SafetyInfo | null>(null);
   const [photos, setPhotos] = useState<TripPhoto[]>([]);
   const [tab, setTab] = useState<Tab>('logistics');
+  const [countdownDays, setCountdownDays] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [realtimeError, setRealtimeError] = useState('');
@@ -400,6 +401,17 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
   const [pendingCount, setPendingCount] = useState(0);
   const baseRef = useRef<BaseData | null>(null);
   const syncingRef = useRef(false);
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const remaining = new Date('2027-08-02T00:00:00-04:00').getTime() - Date.now();
+      setCountdownDays(Math.max(0, Math.floor(remaining / (24 * 60 * 60 * 1000))));
+    };
+
+    updateCountdown();
+    const interval = window.setInterval(updateCountdown, 24 * 60 * 60 * 1000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const showData = useCallback((base: BaseData) => {
     baseRef.current = base;
@@ -968,6 +980,11 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
           <h1>Des lignes à l’eau.<br /><em>Des souvenirs à raconter.</em></h1>
           <p>Réservoir Gouin · Du 2 au 6 août 2027 · Huit amis, quatre couples</p>
         </div>
+        {countdownDays !== null && (
+          <div className="hero-stats" aria-label={`Départ dans ${countdownDays} jours`}>
+            <div><span className="stat-number">{countdownDays}</span><span className="stat-label">Jours</span></div>
+          </div>
+        )}
         <div className="sun-disc" aria-hidden="true" />
         <a className="hero-logo" href="https://pourvoirielagalette.ca/" target="_blank" rel="noreferrer" aria-label="Site de la Pourvoirie Rivière La Galette">
           <img src="/pourvoirie/logo.png" alt="Pourvoirie Rivière La Galette" />

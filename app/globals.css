@@ -90,7 +90,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .sun-disc::before, .sun-disc::after { position: absolute; content: ''; border: 1px solid #ffffff17; border-radius: 50%; }
 .sun-disc::before { inset: 28px; }
 .sun-disc::after { inset: 57px; }
-.tabbar { display: flex; gap: 25px; overflow-x: auto; border-bottom: 1px solid var(--line); scrollbar-width: thin; }
+.tabbar { display: flex; gap: 25px; overflow-x: auto; overflow-y: hidden; border-bottom: 1px solid var(--line); scrollbar-width: none; }
+.tabbar::-webkit-scrollbar { display: none; }
 .tab { position: relative; min-height: 64px; display: flex; align-items: center; gap: 10px; border: 0; padding: 0 2px; color: #7e867e; background: transparent; font-size: 12px; cursor: pointer; }
 .tab:hover, .tab-active { color: var(--forest); }
 .tab-active { font-weight: 700; }
