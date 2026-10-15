@@ -68,16 +68,17 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 .avatar { width: 31px; height: 31px; display: grid; place-items: center; border-radius: 50%; color: var(--forest); background: var(--sage); font: 600 14px var(--serif); }
 .icon-button { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; }
 .icon-button:hover { background: var(--white); }
-.hero { position: relative; min-height: 330px; display: flex; align-items: flex-end; justify-content: space-between; overflow: hidden; margin-top: 26px; padding: 37px 45px; color: white; background: linear-gradient(90deg, #173d33e8, #315c5380 70%), url('/houseboat/bateau-maison-deluxe-25.jpg') center 52%/cover; }
+.hero { position: relative; min-height: 330px; display: flex; align-items: center; justify-content: space-between; overflow: hidden; margin-top: 26px; padding: 37px 45px; color: white; background: linear-gradient(90deg, #173d33e8, #315c5380 70%), url('/houseboat/bateau-maison-deluxe-25.jpg') center 52%/cover; }
 .hero-copy, .hero-stats { position: relative; z-index: 1; }
+.hero-copy { max-width: calc(100% - 145px); }
 .hero h1 { margin: 16px 0 10px; font: 500 clamp(40px, 5vw, 62px)/.99 var(--serif); letter-spacing: -.035em; }
 .hero h1 em { color: #e4ba91; font-weight: 500; }
 .hero-copy > p { margin: 0; color: #d0dcd4; font-size: 12px; }
 .live-dot { width: 6px; height: 6px; display: inline-block; border-radius: 50%; background: #b9d39d; vertical-align: 1px; }
-.hero-stats { display: flex; gap: clamp(24px, 4vw, 55px); padding-bottom: 2px; }
-.hero-stats > div { display: grid; gap: 5px; }
-.stat-number { font: 500 27px/1 var(--serif); white-space: nowrap; }
-.stat-label { color: #c5d0c9; font-size: 9px; letter-spacing: .07em; text-transform: uppercase; }
+.hero-stats { width: 108px; height: 100px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid #ffffff66; border-radius: 4px; background: #10251f66; text-align: center; }
+.hero-stats > div { display: grid; gap: 4px; }
+.stat-number { font: 500 42px/1 var(--serif); white-space: nowrap; }
+.stat-label { color: #dce5df; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
 .hero-logo { position: absolute; top: 22px; right: 26px; z-index: 2; display: block; line-height: 0; border-radius: 4px; overflow: hidden; box-shadow: 0 4px 18px #0000004d; }
 .hero-logo img { width: 190px; height: auto; display: block; }
 .info-subheading { margin: 30px 0 12px; font: 600 21px/1.2 var(--serif); color: var(--forest); }
@@ -240,7 +241,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .auth-panel { padding: 38px; }
   .dashboard { padding: 0 4%; }
   .hero { min-height: 280px; padding: 32px; }
-  .hero-stats { gap: 22px; }
+  .hero-stats { width: 100px; height: 94px; }
   .content-grid { grid-template-columns: minmax(0, 1.4fr) minmax(240px, .85fr); gap: 26px; }
   .side-card { padding: 18px; }
 }
@@ -257,9 +258,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
   .topbar-right { gap: 11px; }
   .hero { min-height: 340px; display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; margin-top: 15px; padding: 28px 22px; }
   .hero h1 { font-size: 49px; }
-  .hero-stats { width: 100%; justify-content: space-between; gap: 8px; }
-  .stat-number { font-size: 22px; }
-  .stat-label { max-width: 82px; font-size: 8px; line-height: 1.4; }
+  .hero-copy { max-width: 100%; }
+  .hero-stats { width: 88px; height: 82px; align-self: flex-end; }
+  .stat-number { font-size: 35px; }
+  .stat-label { font-size: 8px; line-height: 1.4; }
   .sun-disc { top: -150px; right: -145px; }
   .pourvoirie-columns { grid-template-columns: 1fr; }
   .hero-logo img { width: 140px; }

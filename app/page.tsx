@@ -976,9 +976,8 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
 
       <section className="hero">
         <div className="hero-copy">
-          <span className="eyebrow light-eyebrow"><span className="live-dot" /> VOYAGE ENTRE AMIS · ESPACE PARTAGÉ</span>
           <h1>Des lignes à l’eau.<br /><em>Des souvenirs à raconter.</em></h1>
-          <p>Réservoir Gouin · Du 2 au 6 août 2027 · Huit amis, quatre couples</p>
+          <p>Réservoir Gouin · Du 2 au 6 août 2027</p>
         </div>
         {countdownDays !== null && (
           <div className="hero-stats" aria-label={`Départ dans ${countdownDays} jours`}>
