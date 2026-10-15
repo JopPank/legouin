@@ -1005,7 +1005,12 @@ function AppShell({ user, onSignOut }: { user: User; onSignOut: () => void }) {
           ['pourvoirie', '10', 'Pourvoirie'],
           ['safety', '11', 'Sécurité'],
         ] as const).map(([key, number, label]) => (
-          <button key={key} className={`tab ${tab === key ? 'tab-active' : ''}`} onClick={() => setTab(key)}>
+          <button
+            key={key}
+            className={`tab ${tab === key ? 'tab-active' : ''}`}
+            onClick={() => setTab(key)}
+            aria-current={tab === key ? 'page' : undefined}
+          >
             <span className="tab-number">{number}</span>{label}
             {tab === key && <span className="tab-arrow" aria-hidden="true">↗</span>}
           </button>
